@@ -23,4 +23,6 @@
 \<		{yylval.intVal = LES_OP; return(LES_OP); };
 \>		{yylval.intVal = GRT_OP; return(GRT_OP); };
 \!		{yylval.intVal = NOT_OP; return(NOT_OP); };
+\(		{yylval.intVal = OPEN_PARENTHESIS; return(OPEN_PARENTHESIS); };
+\)		{yylval.intVal = CLOSE_PARENTHESIS; return(CLOSE_PARENTHESIS); };
 %%

@@ -27,12 +27,13 @@
 %token <intVal> ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token <intVal> LE_OP GE_OP EQ_OP NE_OP
 %token <intVal> INC_OP DEC_OP
+%token <intVal> OPEN_PARENTHESIS CLOSE_PARENTHESIS
 %left  INC_OP DEC_OP MUL_OP DIV_OP ADD_OP SUB_OP
 
 %%
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
-	| Term				{ $$=$1;}
+	| Term				{ $$=$1; root=$$;}
 	;
 	
 Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -40,6 +41,7 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| NUMBER			{ $$=mkleaf(NUMBER, $1);}
+	| OPEN_PARENTHESIS Exp CLOSE_PARENTHESIS	{ $$=$2}
 	;
 %%
 

@@ -3,7 +3,9 @@
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
+[a-zA-Z]+ {char *buf = malloc(strlen(yytext)); strcpy(buf, yytext); yylval.strVal = buf; return (ID);}
 [ \t]	;
+;		{return(SEMICOLONE);};
 \n	return (0);
 "+="	{yylval.intVal = ADD_ASSIGN; return(ADD_ASSIGN); };
 "-="	{yylval.intVal = SUB_ASSIGN; return(SUB_ASSIGN); };

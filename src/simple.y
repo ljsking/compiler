@@ -15,11 +15,12 @@
 %union {
 	struct _node *nodeVal;
 	int	 intVal;
+	char *strVal;
 }
 
-%type  <nodeVal> Exp
-%type  <nodeVal> Term
+%type  <nodeVal> Statement Exp Term
 
+%token <strVal> ID
 %token <intVal> NUMBER
 %token <intVal> ASS_OP
 %token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP
@@ -28,12 +29,16 @@
 %token <intVal> LE_OP GE_OP EQ_OP NE_OP
 %token <intVal> INC_OP DEC_OP
 %token <intVal> OPEN_PARENTHESIS CLOSE_PARENTHESIS
+%token SEMICOLONE
 %left  INC_OP DEC_OP MUL_OP DIV_OP ADD_OP SUB_OP
 
 %%
-Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
-	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
-	| Term				{ $$=$1; root=$$;}
+Statement 	: Exp SEMICOLONE { root=$1; root=$$;}
+			| ID ASS_OP Exp { $$=mktree($2, $1, 0, $3); root=$$;}
+
+Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Term				{ $$=$1;}
 	;
 	
 Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -85,6 +90,8 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "++");break;
 	case DEC_OP:
 		strcpy(buff, "--");break;
+	case ASS_OP:
+		strcpy(buff, "=");break;
 	}
 	return buff;
 }

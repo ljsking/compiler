@@ -19,24 +19,27 @@
 
 %type  <nodeVal> Exp
 %type  <nodeVal> Term
+
 %token <intVal> NUMBER
-%token ASS_OP
-%token ADD_OP SUB_OP MUL_OP DIV_OP
-%token LES_OP GRT_OP NOT_OP
-%token ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
-%token LE_OP GE_OP EQ_OP NE_OP
-%token INC_OP DEC_OP
-%left ADD_OP SUB_OP
-%left MUL_OP DIV_OP
+%token <intVal> ASS_OP
+%token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP
+%token <intVal> LES_OP GRT_OP NOT_OP
+%token <intVal> ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
+%token <intVal> LE_OP GE_OP EQ_OP NE_OP
+%token <intVal> INC_OP DEC_OP
+%left  INC_OP DEC_OP MUL_OP DIV_OP ADD_OP SUB_OP
 
 %%
-Exp	: Exp ADD_OP Exp	{ $$=mktree(ADD_OP, 0, $3, $1); root=$$;}
-	| Exp SUB_OP Term	{ $$=mktree(SUB_OP, 0, $3, $1);}
-	| Term				{ $$=$1; }
-	| INC_OP Term		{ $$=mktree(INC_OP, 0, 0, $2);}
-	| DEC_OP Term		{ $$=mktree(DEC_OP, 0, 0, $2);}
+Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
+	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1); root=$$;}
+	| Term				{ $$=$1;}
 	;
-Term: NUMBER			{ $$=mkleaf(NUMBER, $1);}
+	
+Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Term DIV_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
+	| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
+	| NUMBER			{ $$=mkleaf(NUMBER, $1);}
 	;
 %%
 
@@ -68,6 +71,12 @@ char *convertTag(int token, char *buff)
 	{
 	case ADD_OP:
 		strcpy(buff, "+");break;
+	case SUB_OP:
+		strcpy(buff, "-");break;
+	case MUL_OP:
+		strcpy(buff, "*");break;
+	case DIV_OP:
+		strcpy(buff, "/");break;
 	case NUMBER:
 		strcpy(buff, "NUM");break;
 	case INC_OP:

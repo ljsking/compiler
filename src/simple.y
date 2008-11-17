@@ -1,12 +1,15 @@
 %{
 	#include <stdio.h>
+	#include <string.h>
 	struct _node {
-		char	kind;
+		int 	tag;
 		int		val;
-		struct _node *bro, *son;
+		struct 	_node *bro, *son;
 	};
-	struct _node *mktree(char, int, struct _node *, struct _node *);
-	struct _node *mkleaf(char, int);
+	struct _node *mktree(int, int, struct _node *, struct _node *);
+	struct _node *mkleaf(int, int);
+	int			 printnode(struct _node *, int , int );
+	struct _node *root;
 %}
 
 %union {
@@ -14,34 +17,78 @@
 	int	 intVal;
 }
 
-%type <nodeVal> Exp
+%type  <nodeVal> Exp
+%type  <nodeVal> Term
 %token <intVal> NUMBER
-%left '+' '-' '*' '/'
+%token ASS_OP
+%token ADD_OP SUB_OP MUL_OP DIV_OP
+%token LES_OP GRT_OP NOT_OP
+%token ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
+%token LE_OP GE_OP EQ_OP NE_OP
+%token INC_OP DEC_OP
+%left ADD_OP SUB_OP
+%left MUL_OP DIV_OP
 
 %%
-Exp	: Exp '+' Exp 		{ mktree('+', 0, $3, $1); printf("+ %d\n", $$); }
-	| NUMBER		{ mkleaf('L', $1); printf("num %d\n", $$); }
+Exp	: Exp ADD_OP Exp	{ $$=mktree(ADD_OP, 0, $3, $1); root=$$;}
+	| Exp SUB_OP Term	{ $$=mktree(SUB_OP, 0, $3, $1);}
+	| Term				{ $$=$1; }
+	| INC_OP Term		{ $$=mktree(INC_OP, 0, 0, $2);}
+	| DEC_OP Term		{ $$=mktree(DEC_OP, 0, 0, $2);}
+	;
+Term: NUMBER			{ $$=mkleaf(NUMBER, $1);}
 	;
 %%
 
 int yyerror() { puts("syntax error!"); }
 
-int main() { yyparse(); return 0; }
+int main() { yyparse(); printnode(root, 1, 0); return 0; }
 
-struct _node *mktree(char tag, int lval, struct _node *sibling, struct _node *son)
+struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son)
 {
 	struct _node *rz = malloc(sizeof(struct _node));
-	rz->kind = tag;
+	rz->tag = tag;
 	rz->val = lval;
 	rz->son = son;
 	son->bro = sibling;
 	return rz;
 }
 
-struct _node *mkleaf(char tag, int lval)
+struct _node *mkleaf(int tag, int lval)
 {
 	struct _node *rz = malloc(sizeof(struct _node));
-	rz->kind = tag;
+	rz->tag = tag;
 	rz->val = lval;
 	return rz;
+}
+
+char *convertTag(int token, char *buff)
+{
+	switch(token)
+	{
+	case ADD_OP:
+		strcpy(buff, "+");break;
+	case NUMBER:
+		strcpy(buff, "NUM");break;
+	case INC_OP:
+		strcpy(buff, "++");break;
+	case DEC_OP:
+		strcpy(buff, "--");break;
+	}
+	return buff;
+}
+
+int printnode(struct _node *node, int height, int newlined)
+{
+	int i;
+	char buff[256];
+	if(!node) return 0;
+	if(newlined)
+		for(i=0;i<height-1;i++)
+			printf("\t");
+	printf("\t%s(%d)", convertTag(node->tag, buff), node->val);
+	printnode(node->son, height+1, 0);
+	printf("\n");
+	printnode(node->bro, height, 1);
+	return 0;
 }

@@ -69,7 +69,7 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 
 int yyerror() { puts("syntax error!"); }
 
-int main() { yyparse(); printnode(root, 1, 0); return 0; }
+int main() { yyparse(); printnode(root, 1, 0); printf("\n"); return 0; }
 
 struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son)
 {
@@ -144,14 +144,19 @@ char *convertTag(int token, char *buff)
 int printnode(struct _node *node, int height, int newlined)
 {
 	int i;
+	if(!node)
+		return 0;
 	char buff[256];
-	if(!node) return 0;
 	if(newlined)
 		for(i=0;i<height-1;i++)
 			printf("\t");
 	printf("\t%s(%d)", convertTag(node->tag, buff), node->val);
-	printnode(node->son, height+1, 0);
-	printf("\n");
-	printnode(node->bro, height, 1);
+	if(node->son)
+		printnode(node->son, height+1, 0);
+	if(node->bro){
+		printf("\n");
+		printnode(node->bro, height, 1);
+	}
+		
 	return 0;
 }

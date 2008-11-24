@@ -23,10 +23,13 @@
 	struct _symbol *symbVal;
 }
 
-%type  <nodeVal> Statement Exp Term
+%type  <nodeVal> Statements
+%type  <nodeVal> Statement
+%type  <nodeVal> Exp Term
 
 %token <symbVal> ID
-%token <intVal> NUMBER INT
+%token <intVal> INT
+%token <intVal> NUMBER
 %token <intVal> ASS_OP
 %token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
 %token <intVal> LES_OP GRT_OP NOT_OP
@@ -39,10 +42,14 @@
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
-
 %%
-Statement 	: Exp SEMICOLONE { root=$1; root=$$;}
-			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, (int)$1, 0, $3); root=$$;}
+
+Statements	: Statements Statement {printf("");}
+			| Statement {$$=$1; root=$$;}
+
+Statement 	: INT ID SEMICOLONE { $$=mkleaf($1, (int)$2);}
+			| Exp SEMICOLONE { root=$1;}
+			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, (int)$1, 0, $3);}
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -148,6 +155,8 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, ".^");break;
 	case ASS_OP:
 		strcpy(buff, "=");break;
+	case INT:
+		strcpy(buff, "int");break;
 	}
 	return buff;
 }
@@ -168,6 +177,5 @@ int printnode(struct _node *node, int height, int newlined)
 		printf("\n");
 		printnode(node->bro, height, 1);
 	}
-		
 	return 0;
 }

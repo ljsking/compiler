@@ -4,6 +4,7 @@
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
+"int"	{yylval.intVal = INT; return(INT); };
 [a-zA-Z]+ {
 	if(currentSymbol>MAX_SYMBOL_SIZE){
 		printf("The number of symbol is exceeded\n");
@@ -19,6 +20,7 @@
 [ \t]	;
 ;		{return(SEMICOLONE);};
 \n		return (0);
+
 "+="	{yylval.intVal = ADD_ASSIGN; return(ADD_ASSIGN); };
 "-="	{yylval.intVal = SUB_ASSIGN; return(SUB_ASSIGN); };
 "*="	{yylval.intVal = MUL_ASSIGN; return(MUL_ASSIGN); };

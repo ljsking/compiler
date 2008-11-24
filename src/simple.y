@@ -1,26 +1,31 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
+	#include "simple.h"
 	struct _node {
 		int 	tag;
 		int		val;
 		struct 	_node *bro, *son;
 	};
+	
 	struct _node *mktree(int, int, struct _node *, struct _node *);
 	struct _node *mkleaf(int, int);
 	int			 printnode(struct _node *, int , int );
 	struct _node *root;
+	struct _symbol **symbolTable;
+	int currentSymbol = 0;
 %}
 
 %union {
 	struct _node *nodeVal;
 	int	 intVal;
 	char *strVal;
+	struct _symbol *symbVal;
 }
 
 %type  <nodeVal> Statement Exp Term
 
-%token <strVal> ID
+%token <symbVal> ID
 %token <intVal> NUMBER INT
 %token <intVal> ASS_OP
 %token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
@@ -37,7 +42,7 @@
 
 %%
 Statement 	: Exp SEMICOLONE { root=$1; root=$$;}
-			| ID ASS_OP Exp { $$=mktree($2, (int)$1, 0, $3); root=$$;}
+			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, (int)$1, 0, $3); root=$$;}
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -69,7 +74,13 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 
 int yyerror() { puts("syntax error!"); }
 
-int main() { yyparse(); printnode(root, 1, 0); printf("\n"); return 0; }
+int main() { 
+	symbolTable = malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
+	yyparse();
+	printnode(root, 1, 0);
+	printf("\n");
+	return 0;
+}
 
 struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son)
 {

@@ -1,12 +1,19 @@
 %{
-#include "simple.tab.h"
+	#include "simple.h"
+	#include "simple.tab.h"
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
 [a-zA-Z]+ {
+	if(currentSymbol>MAX_SYMBOL_SIZE){
+		printf("The number of symbol is exceeded\n");
+		exit(-1);
+	}
 	char *buf = malloc(strlen(yytext));
 	strcpy(buf, yytext);
-	yylval.strVal = buf;
+	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
+	yylval.symbVal = symbolTable[currentSymbol];
+	currentSymbol++;
 	return (ID);
 }
 [ \t]	;

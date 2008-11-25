@@ -5,5 +5,5 @@ struct _symbol {
 	void *pointer;
 };
 extern struct _symbol **symbolTable;
-extern  int currentSymbol;
+extern int currentSymbol;
 #endif

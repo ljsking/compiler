@@ -4,19 +4,8 @@
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
-"int"	{yylval.intVal = INT; return(INT); };
-[a-zA-Z]+ {
-	if(currentSymbol>MAX_SYMBOL_SIZE){
-		printf("The number of symbol is exceeded\n");
-		exit(-1);
-	}
-	char *buf = malloc(strlen(yytext));
-	strcpy(buf, yytext);
-	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
-	yylval.symbVal = symbolTable[currentSymbol];
-	currentSymbol++;
-	return (ID);
-}
+"int"	{yylval.intVal = INT; return(INT); }
+[a-zA-Z]+ {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ;		{return(SEMICOLONE);};
 \n		return (0);
@@ -49,3 +38,17 @@
 \(		{yylval.intVal = OPEN_PARENTHESIS; return(OPEN_PARENTHESIS); };
 \)		{yylval.intVal = CLOSE_PARENTHESIS; return(CLOSE_PARENTHESIS); };
 %%
+int insertSymbolTable(char *id)
+{
+	if(currentSymbol>MAX_SYMBOL_SIZE){
+		printf("The number of symbol is exceeded\n");
+		exit(-1);
+	}
+	char *buf = malloc(strlen(yytext));
+	strcpy(buf, yytext);
+	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
+	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
+	yylval.symbVal = symbolTable[currentSymbol];
+	currentSymbol++;
+	return currentSymbol-1;
+}

@@ -1,5 +1,5 @@
 %{
-	#include "simple.h"
+	#include "symbol.h"
 	#include "simple.tab.h"
 	int insertSymbolTable(char *);
 %}
@@ -43,31 +43,3 @@
 \[		{yylval.intVal = OPEN_SQUARE_BRACKET; return(OPEN_SQUARE_BRACKET); };
 \]		{yylval.intVal = CLOSE_SQUARE_BRACKET; return(CLOSE_SQUARE_BRACKET); };
 %%
-int isDuplicated(char *id)
-{
-	int i;
-	for(i=0;i<nextSymbol;i++){
-		if(0==strcmp(id, symbolTable[i]->id)){
-			return i;
-		}
-	}
-	return 0;
-}
-int insertSymbolTable(char *id)
-{
-	int i;
-	if(nextSymbol>MAX_SYMBOL_SIZE){
-		printf("The number of symbol is exceeded\n");
-		exit(-1);
-	}
-	if(i = isDuplicated(id))
-	{
-		return i;
-	}
-	char *buf = (char *)malloc(strlen(id));
-	strcpy(buf, id);
-	symbolTable[nextSymbol]=(struct _symbol *)malloc(sizeof(struct _symbol));
-	symbolTable[nextSymbol]->id = buf;
-	nextSymbol++;
-	return nextSymbol-1;
-}

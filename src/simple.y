@@ -6,11 +6,9 @@
 	#include "node.h"
 	#include "type.h"
 	#include "statementList.h"
+	#include "interpreter.h"
+	#include "symbol.h"
 	#include "simple.h"
-	#define TypeInfo 	1
-	#define IDList		2
-	struct _symbol **symbolTable;
-	int nextSymbol = 0;
 	struct _statementList *root;
 %}
 
@@ -59,7 +57,7 @@ DeclareStatements : DeclareStatements DeclareStatement {
 	
 
 DeclareStatement : Type IDList SEMICOLONE { 
-						$$=mkStatementListWithVal(mktree(TypeInfo, 0, 0, $2));
+						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
 					}
 
 Type : ScalarType
@@ -122,8 +120,7 @@ int yyerror() { puts("syntax error!"); }
 int main() { 
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	yyparse();
-	printStatementList(root);
-	printf("\n");
+	interpret(root);
 	return 0;
 }
 

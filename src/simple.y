@@ -10,10 +10,11 @@
 	
 	struct _node *mktree(int, int, struct _node *, struct _node *);
 	struct _node *mkleaf(int, int);
+	struct _node *mkbro(struct _node *, struct _node *);
 	int			 printnode(struct _node *, int , int );
 	struct _node *root;
 	struct _symbol **symbolTable;
-	int currentSymbol = 0;
+	int nextSymbol = 0;
 %}
 
 %union {
@@ -44,8 +45,16 @@
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
-Statements	: Statements Statement {printf("");}
-			| Statement {$$=$1; root=$$;}
+Statements	: Statements Statement {$$=mkbro($1,$2);root=$$;}
+			| Statement {
+				struct _node *rz = malloc(sizeof(struct _node));
+				rz->tag = 0;
+				rz->val = 0;
+				rz->son = $1;
+				rz->bro = 0;
+				$$=rz; 
+				root=$$;
+			}
 
 Statement 	: INT ID SEMICOLONE { $$=mkleaf($1, $2);}
 			| Exp SEMICOLONE { root=$1;}
@@ -102,6 +111,8 @@ struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son
 struct _node *mkleaf(int tag, int lval)
 {
 	struct _node *rz = malloc(sizeof(struct _node));
+	rz->son = 0;
+	rz->bro = 0;
 	rz->tag = tag;
 	rz->val = lval;
 	return rz;
@@ -157,6 +168,8 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "=");break;
 	case INT:
 		strcpy(buff, "int");break;
+	default:
+		strcpy(buff, "");break;
 	}
 	return buff;
 }
@@ -178,4 +191,19 @@ int printnode(struct _node *node, int height, int newlined)
 		printnode(node->bro, height, 1);
 	}
 	return 0;
+}
+
+struct _node *mkbro(struct _node *parent, struct _node *bro)
+{
+	struct _node *pre;
+	struct _node *target = parent->son;
+	if(target == NULL)
+		parent->son = bro;
+	else{
+		while(target->bro){
+			target=target->bro;
+		}
+		target->bro = bro;
+	}
+	return parent;
 }

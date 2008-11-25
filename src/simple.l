@@ -38,17 +38,31 @@
 \(		{yylval.intVal = OPEN_PARENTHESIS; return(OPEN_PARENTHESIS); };
 \)		{yylval.intVal = CLOSE_PARENTHESIS; return(CLOSE_PARENTHESIS); };
 %%
+int isDuplicated(char *id)
+{
+	int i;
+	for(i=0;i<nextSymbol;i++){
+		if(0==strcmp(id, symbolTable[i]->id)){
+			return 1;
+		}
+	}
+	return 0;
+}
 int insertSymbolTable(char *id)
 {
-	if(currentSymbol>MAX_SYMBOL_SIZE){
+	if(nextSymbol>MAX_SYMBOL_SIZE){
 		printf("The number of symbol is exceeded\n");
 		exit(-1);
 	}
-	char *buf = malloc(strlen(yytext));
-	strcpy(buf, yytext);
-	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
-	symbolTable[currentSymbol]=malloc(sizeof(struct _symbol));
-	yylval.symbVal = symbolTable[currentSymbol];
-	currentSymbol++;
-	return currentSymbol-1;
+	if(isDuplicated(id))
+	{
+		printf("Symbol(%s) is duplicated\n", id);
+		exit(-1);
+	}
+	char *buf = malloc(strlen(id));
+	strcpy(buf, id);
+	symbolTable[nextSymbol]=malloc(sizeof(struct _symbol));
+	symbolTable[nextSymbol]->id = buf;
+	nextSymbol++;
+	return nextSymbol-1;
 }

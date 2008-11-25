@@ -2,8 +2,8 @@
 #define SIMPLE_H
 #define MAX_SYMBOL_SIZE 100
 struct _symbol {
-	void *pointer;
+	char *id;
 };
 extern struct _symbol **symbolTable;
-extern int currentSymbol;
+extern int nextSymbol;
 #endif

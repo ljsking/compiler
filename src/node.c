@@ -3,8 +3,6 @@
 #include "intList.h"
 #include "node.h"
 
-#define DEBUG_NODE
-
 struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son){
 	struct _node *rz = (struct _node *)malloc(sizeof(struct _node));
 	#ifdef DEBUG_NODE

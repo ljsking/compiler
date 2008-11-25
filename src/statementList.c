@@ -41,7 +41,10 @@ void	 		mergeStatementList(struct _statementList *l1,struct _statementList *l2)
 void			printStatementList(struct _statementList *list){
 	int i;
 	printf("list:%d, now:%d, max:%d\n", list, list->numberElement, list->maxElement);
-	for(i=0;i<list->numberElement;i++)
-		printf("%d, ", list->elements[i]);
+	for(i=0;i<list->numberElement;i++){
+		printf("\n%d>",i);
+		printnode(list->elements[i],1,0);
+	}
+		
 	printf("\n");
 }

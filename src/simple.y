@@ -11,6 +11,7 @@
 	#define IDList		2
 	struct _symbol **symbolTable;
 	int nextSymbol = 0;
+	struct _statementList *root;
 %}
 
 %union {
@@ -41,9 +42,13 @@
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
-Program		: DeclareStatements Statements
-			| Statements
-			| DeclareStatements
+Program		: DeclareStatements Statements{ 
+						mergeStatementList($1,$2); 
+						freeStatementList($2);
+						root=$1;
+					}
+			| Statements{root=$$;}
+			| DeclareStatements{root=$$;}
 
 DeclareStatements : DeclareStatements DeclareStatement { 
 						mergeStatementList($1,$2); 
@@ -54,7 +59,7 @@ DeclareStatements : DeclareStatements DeclareStatement {
 	
 
 DeclareStatement : Type IDList SEMICOLONE { 
-						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
+						$$=mkStatementListWithVal(mktree(TypeInfo, 0, 0, $2));
 					}
 
 Type : ScalarType
@@ -117,6 +122,7 @@ int yyerror() { puts("syntax error!"); }
 int main() { 
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	yyparse();
+	printStatementList(root);
 	printf("\n");
 	return 0;
 }

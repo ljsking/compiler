@@ -23,11 +23,10 @@
 	char *strVal;
 	struct _symbol *symbVal;
 }
-%type  <nodeVal> Program DeclareStatements DeclareStatement Statements Statement Exp Term
+%type  <nodeVal> Program DeclareStatements DeclareStatement IDList Statements Statement Exp Term
+%type  <intVal>  Type
 
-%token <intVal> ID
-%token <intVal> INT
-%token <intVal> NUMBER
+%token <intVal> ID INT BOOL NUMBER
 %token <intVal> ASS_OP
 %token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
 %token <intVal> LES_OP GRT_OP NOT_OP
@@ -36,7 +35,7 @@
 %token <intVal> INC_OP DEC_OP
 %token <intVal> OPEN_PARENTHESIS CLOSE_PARENTHESIS
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE
+%token SEMICOLONE COMMA
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -58,7 +57,13 @@ DeclareStatements : DeclareStatements DeclareStatement {$$=mkbro($1,$2);root=$$;
 					}
 	
 
-DeclareStatement : INT ID SEMICOLONE { $$=mkleaf($1, $2);}
+DeclareStatement : Type IDList SEMICOLONE { $$=mktree($1, 0, 0, $2);}
+
+Type : INT
+	 | BOOL
+	
+IDList : ID {$$=mktree(0, 0, 0, mkleaf(ID, $1))}
+	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
 
 Statements	: Statements Statement {$$=mkbro($1,$2);root=$$;}
 			| Statement {
@@ -182,6 +187,10 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "=");break;
 	case INT:
 		strcpy(buff, "int");break;
+	case BOOL:
+		strcpy(buff, "bool");break;
+	case ID:
+		strcpy(buff, "symbol");break;
 	default:
 		strcpy(buff, "");break;
 	}

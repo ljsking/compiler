@@ -27,7 +27,7 @@
 %type  <nodeVal> Statement
 %type  <nodeVal> Exp Term
 
-%token <symbVal> ID
+%token <intVal> ID
 %token <intVal> INT
 %token <intVal> NUMBER
 %token <intVal> ASS_OP
@@ -47,9 +47,9 @@
 Statements	: Statements Statement {printf("");}
 			| Statement {$$=$1; root=$$;}
 
-Statement 	: INT ID SEMICOLONE { $$=mkleaf($1, (int)$2);}
+Statement 	: INT ID SEMICOLONE { $$=mkleaf($1, $2);}
 			| Exp SEMICOLONE { root=$1;}
-			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, (int)$1, 0, $3);}
+			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, $1, 0, $3);}
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}

@@ -1,16 +1,33 @@
 %{
 	#include <stdio.h>
 	#include <string.h>
+	#include <stdlib.h>
+	#include "intList.h"
 	#include "simple.h"
+	#define TypeInfo 	1
+	#define IDList		2
+	
 	struct _node {
 		int 	tag;
 		int		val;
 		struct 	_node *bro, *son;
 	};
 	
+	struct _type{
+		int		type;
+		int		numberDimension;
+		int		maxDimension;
+		int		*dimensions;
+	};
+	
+	
+	
 	struct _node *mktree(int, int, struct _node *, struct _node *);
 	struct _node *mkleaf(int, int);
 	struct _node *mkbro(struct _node *, struct _node *);
+	
+	struct _type *mkType(int type);
+	
 	int			 printnode(struct _node *, int , int );
 	struct _node *root;
 	struct _symbol **symbolTable;
@@ -22,9 +39,12 @@
 	int	 intVal;
 	char *strVal;
 	struct _symbol *symbVal;
+	struct _type *typeVal;
+	struct _intList *intList;
 }
 %type  <nodeVal> Program DeclareStatements DeclareStatement IDList Statements Statement Exp Term
-%type  <intVal>  Type
+%type  <typeVal> Type ScalarType VectorType
+%type  <intList> Dimensions Dimension
 
 %token <intVal> ID INT BOOL NUMBER
 %token <intVal> ASS_OP
@@ -33,9 +53,8 @@
 %token <intVal> ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token <intVal> LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
 %token <intVal> INC_OP DEC_OP
-%token <intVal> OPEN_PARENTHESIS CLOSE_PARENTHESIS
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE COMMA
+%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -47,7 +66,7 @@ Program		: DeclareStatements Statements
 
 DeclareStatements : DeclareStatements DeclareStatement {$$=mkbro($1,$2);root=$$;}
 				  | DeclareStatement{
-						struct _node *rz = malloc(sizeof(struct _node));
+						struct _node *rz = (struct _node *)malloc(sizeof(struct _node));
 						rz->tag = 0;
 						rz->val = 0;
 						rz->son = $1;
@@ -57,17 +76,27 @@ DeclareStatements : DeclareStatements DeclareStatement {$$=mkbro($1,$2);root=$$;
 					}
 	
 
-DeclareStatement : Type IDList SEMICOLONE { $$=mktree($1, 0, 0, $2);}
+DeclareStatement : Type IDList SEMICOLONE { $$=mktree(TypeInfo, (int)$1, 0, $2);}
 
-Type : INT
-	 | BOOL
+Type : ScalarType
+	 | VectorType
 	
-IDList : ID {$$=mktree(0, 0, 0, mkleaf(ID, $1))}
+ScalarType : INT {$$=mkType($1);}
+		   | BOOL {$$=mkType($1);}
+		
+VectorType : ScalarType OPEN_SQUARE_BRACKET Dimensions CLOSE_SQUARE_BRACKET {
+	printf("\nDimension!!\n");printIntList($3);
+}
+Dimensions : Dimension
+		   | Dimensions COMMA Dimension { insertIntList($1, $3->elements[0]); freeIntList($3); $$=$1; }
+Dimension  : NUMBER{ $$=mkIntList(); insertIntList($$, $1) }
+	
+IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1))}
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
 
 Statements	: Statements Statement {$$=mkbro($1,$2);root=$$;}
 			| Statement {
-				struct _node *rz = malloc(sizeof(struct _node));
+				struct _node *rz = (struct _node *)malloc(sizeof(struct _node));
 				rz->tag = 0;
 				rz->val = 0;
 				rz->son = $1;
@@ -103,14 +132,14 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| NOT_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| NUMBER			{ $$=mkleaf(NUMBER, $1);}
-	| OPEN_PARENTHESIS Exp CLOSE_PARENTHESIS	{ $$=$2;}
+	| OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET	{ $$=$2;}
 	;
 %%
 
 int yyerror() { puts("syntax error!"); }
 
 int main() { 
-	symbolTable = malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
+	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	yyparse();
 	printnode(root, 1, 0);
 	printf("\n");
@@ -119,7 +148,7 @@ int main() {
 
 struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son)
 {
-	struct _node *rz = malloc(sizeof(struct _node));
+	struct _node *rz = (struct _node *)malloc(sizeof(struct _node));
 	rz->tag = tag;
 	rz->val = lval;
 	rz->son = son;
@@ -129,7 +158,7 @@ struct _node *mktree(int tag, int lval, struct _node *sibling, struct _node *son
 
 struct _node *mkleaf(int tag, int lval)
 {
-	struct _node *rz = malloc(sizeof(struct _node));
+	struct _node *rz = (struct _node *)malloc(sizeof(struct _node));
 	rz->son = 0;
 	rz->bro = 0;
 	rz->tag = tag;
@@ -191,6 +220,10 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "bool");break;
 	case ID:
 		strcpy(buff, "symbol");break;
+	case TypeInfo:
+		strcpy(buff, "type");break;
+	case IDList:
+		strcpy(buff, "ids");break;
 	default:
 		strcpy(buff, "");break;
 	}
@@ -229,4 +262,26 @@ struct _node *mkbro(struct _node *parent, struct _node *bro)
 		target->bro = bro;
 	}
 	return parent;
+}
+
+struct _type *mkType(int type)
+{
+	struct _type *t = (struct _type *)malloc(sizeof(struct _type));
+	t->type = type;
+	t->numberDimension = 0;
+	return t;
+}
+
+void addDimension(struct _type *t, int dimension)
+{
+	if(t->numberDimension == 0){
+		t->maxDimension = 10;
+		t->dimensions = (int *)malloc(sizeof(int)*t->maxDimension);
+	}
+	if(t->numberDimension==t->maxDimension){
+		printf("Exceed number of dimension\n");
+		exit(-1);
+	}
+	t->numberDimension++;
+	*(t->dimensions+t->numberDimension)=dimension;
 }

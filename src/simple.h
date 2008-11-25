@@ -6,4 +6,5 @@ struct _symbol {
 };
 extern struct _symbol **symbolTable;
 extern int nextSymbol;
+#define DEBUG
 #endif

@@ -1,8 +1,8 @@
 TARGET = compiler
 CC = gcc
 
-$(TARGET): lex.yy.c simple.tab.c
-	$(CC) -o $(TARGET) lex.yy.c simple.tab.c -lfl
+$(TARGET): lex.yy.c simple.tab.c simple.h intList.c intList.h
+	$(CC) -o $(TARGET) lex.yy.c simple.tab.c intList.c -lfl
 
 clean:
 	rm $(TARGET) lex.yy.c simple.tab.c simple.tab.h

@@ -1,6 +1,7 @@
 %{
 	#include "simple.h"
 	#include "simple.tab.h"
+	int insertSymbolTable(char *);
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
@@ -37,8 +38,10 @@
 ".*"	{yylval.intVal = ELE_MUL_OP; return(ELE_MUL_OP); };
 "./"	{yylval.intVal = ELE_DIV_OP; return(ELE_DIV_OP); };
 ".^"	{yylval.intVal = ELE_POW_OP; return(ELE_POW_OP); };
-\(		{yylval.intVal = OPEN_PARENTHESIS; return(OPEN_PARENTHESIS); };
-\)		{yylval.intVal = CLOSE_PARENTHESIS; return(CLOSE_PARENTHESIS); };
+\(		{yylval.intVal = OPEN_ROUND_BRACKET; return(OPEN_ROUND_BRACKET); };
+\)		{yylval.intVal = CLOSE_ROUND_BRACKET; return(CLOSE_ROUND_BRACKET); };
+\[		{yylval.intVal = OPEN_SQUARE_BRACKET; return(OPEN_SQUARE_BRACKET); };
+\]		{yylval.intVal = CLOSE_SQUARE_BRACKET; return(CLOSE_SQUARE_BRACKET); };
 %%
 int isDuplicated(char *id)
 {
@@ -61,9 +64,9 @@ int insertSymbolTable(char *id)
 	{
 		return i;
 	}
-	char *buf = malloc(strlen(id));
+	char *buf = (char *)malloc(strlen(id));
 	strcpy(buf, id);
-	symbolTable[nextSymbol]=malloc(sizeof(struct _symbol));
+	symbolTable[nextSymbol]=(struct _symbol *)malloc(sizeof(struct _symbol));
 	symbolTable[nextSymbol]->id = buf;
 	nextSymbol++;
 	return nextSymbol-1;

@@ -1,6 +1,5 @@
 #ifndef INTLIST_H
 #define INTLIST_H
-
 struct _intList{
 	int		numberElement;
 	int		maxElement;

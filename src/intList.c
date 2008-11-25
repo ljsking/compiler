@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "simple.h"
+#include "intList.h"
 
 struct _intList *mkIntList(){
 	struct _intList *list = malloc(sizeof(struct _intList));

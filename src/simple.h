@@ -6,5 +6,6 @@ struct _symbol {
 };
 extern struct _symbol **symbolTable;
 extern int nextSymbol;
+char *convertTag(int , char *);
 #define DEBUG
 #endif

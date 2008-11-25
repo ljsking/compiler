@@ -43,21 +43,21 @@ int isDuplicated(char *id)
 	int i;
 	for(i=0;i<nextSymbol;i++){
 		if(0==strcmp(id, symbolTable[i]->id)){
-			return 1;
+			return i;
 		}
 	}
 	return 0;
 }
 int insertSymbolTable(char *id)
 {
+	int i;
 	if(nextSymbol>MAX_SYMBOL_SIZE){
 		printf("The number of symbol is exceeded\n");
 		exit(-1);
 	}
-	if(isDuplicated(id))
+	if(i = isDuplicated(id))
 	{
-		printf("Symbol(%s) is duplicated\n", id);
-		exit(-1);
+		return i;
 	}
 	char *buf = malloc(strlen(id));
 	strcpy(buf, id);

@@ -23,10 +23,7 @@
 	char *strVal;
 	struct _symbol *symbVal;
 }
-
-%type  <nodeVal> Statements
-%type  <nodeVal> Statement
-%type  <nodeVal> Exp Term
+%type  <nodeVal> Program DeclareStatements DeclareStatement Statements Statement Exp Term
 
 %token <intVal> ID
 %token <intVal> INT
@@ -45,6 +42,24 @@
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
+Program		: DeclareStatements Statements
+			| Statements
+			| DeclareStatements
+
+DeclareStatements : DeclareStatements DeclareStatement {$$=mkbro($1,$2);root=$$;}
+				  | DeclareStatement{
+						struct _node *rz = malloc(sizeof(struct _node));
+						rz->tag = 0;
+						rz->val = 0;
+						rz->son = $1;
+						rz->bro = 0;
+						$$=rz; 
+						root=$$;
+					}
+	
+
+DeclareStatement : INT ID SEMICOLONE { $$=mkleaf($1, $2);}
+
 Statements	: Statements Statement {$$=mkbro($1,$2);root=$$;}
 			| Statement {
 				struct _node *rz = malloc(sizeof(struct _node));
@@ -56,8 +71,7 @@ Statements	: Statements Statement {$$=mkbro($1,$2);root=$$;}
 				root=$$;
 			}
 
-Statement 	: INT ID SEMICOLONE { $$=mkleaf($1, $2);}
-			| Exp SEMICOLONE { root=$1;}
+Statement 	: Exp SEMICOLONE { root=$1;}
 			| ID ASS_OP Exp SEMICOLONE { $$=mktree($2, $1, 0, $3);}
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}

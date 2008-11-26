@@ -19,6 +19,9 @@ void			freeIntList(struct _intList *list){
 	free(list);
 }
 void 			insertIntList(struct _intList *list, int val){
+	#ifdef DEBUG_LIST
+	printf("insertIntList %d now:%d max:%d\n", list, list->numberElement, list->maxElement);
+	#endif
 	if(list->numberElement == list->maxElement){
 		printf("exceed number of elements\n");
 		exit(-1);
@@ -26,10 +29,19 @@ void 			insertIntList(struct _intList *list, int val){
 	list->elements[list->numberElement] = val;
 	list->numberElement++;
 }
+int				getIntList(struct _intList *list, int index){
+	#ifdef DEBUG_LIST
+	printf("getIntList %d now:%d max:%d\n", list, list->numberElement, list->maxElement);
+	#endif
+	if(list->numberElement < index){
+		printf("index is out of bound\n");
+		exit(-1);
+	}
+	return list->elements[index];
+}
 void			printIntList(struct _intList *list){
 	int i;
 	printf("list:%d, now:%d, max:%d\n", list, list->numberElement, list->maxElement);
 	for(i=0;i<list->numberElement;i++)
 		printf("%d, ", list->elements[i]);
-	printf("\n");
 }

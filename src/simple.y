@@ -119,6 +119,7 @@ int yyerror() { puts("syntax error!"); }
 
 int main() { 
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
+	initScalarType();
 	yyparse();
 	interpret(root);
 	return 0;

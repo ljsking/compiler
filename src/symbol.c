@@ -35,7 +35,7 @@ int insertSymbolTable(char *id)
 	symbolTable[nextSymbol]=(struct _symbol *)malloc(sizeof(struct _symbol));
 	symbolTable[nextSymbol]->id = buf;
 	symbolTable[nextSymbol]->type = 0;
-	symbolTable[nextSymbol]->val = 0;
+	symbolTable[nextSymbol]->vector = 0;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol is malloc in %d\n", nextSymbol, symbolTable[nextSymbol]);
 	#endif
@@ -46,19 +46,40 @@ void setTypeSymbol(int index, struct _type *type){
 	symbolTable[index]->type = type;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol set type %d\n", index, symbolTable[index]->type);
+	printSymbol(symbolTable[index]);
+	printf("\n");
 	#endif
 }
-int setValueSymbol(int index, int val){
+int setValueSymbol(int index, struct _vector *val){
 	if(symbolTable[index]->type==0) return -1;
-	symbolTable[index]->val = val;
+	symbolTable[index]->vector = val;
 	#ifdef DEBUG_SYMBOL
-	printf("SYM: %d(%d) symbol set value %d\n", index, symbolTable[index]->type, symbolTable[index]->val);
+	printf("SYM: %d symbol set value %d\n", index, symbolTable[index]->vector);
+	printSymbol(symbolTable[index]);
+	printf("\n");
 	#endif
 	return 0;
 }
-int getValueSymbol(int index){
+struct _vector *getValueSymbol(int index){
 	#ifdef DEBUG_SYMBOL
-	printf("SYM: %d(%d) symbol get value %d\n", index, symbolTable[index]->type, symbolTable[index]->val);
+	printf("SYM: %d symbol get value %d\n", index, symbolTable[index]->vector);
+	printSymbol(symbolTable[index]);
+	printf("\n");
 	#endif
-	return symbolTable[index]->val;
+	return symbolTable[index]->vector;
+}
+struct _type *getTypeSymbol(int index){
+	#ifdef DEBUG_SYMBOL
+	printf("SYM: %d symbol get type %d\n", index, symbolTable[index]->type);
+	printSymbol(symbolTable[index]);
+	printf("\n");
+	#endif
+	return symbolTable[index]->type;
+}
+void printSymbol(struct _symbol *s){
+	printf("symbol %s ", s->id);
+	if(s->type)
+		printType(s->type);
+	if(s->vector)
+		printVector(s->vector);
 }

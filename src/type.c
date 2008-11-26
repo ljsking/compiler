@@ -1,6 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "type.h"
+struct _type *integer;
+int initScalarType()
+{
+	integer=(struct _type *)malloc(sizeof(struct _type));
+	integer->vector = 0;
+	mkIntList(integer->dimensions);
+}
 struct _type *mkType(int type)
 {
 	struct _type *t = (struct _type *)malloc(sizeof(struct _type));
@@ -18,5 +25,4 @@ void printType(struct _type *t){
 	printf("\nType:%s, vector:%d",convertTag(t->type, buf),t->vector);
 	if(t->vector)
 		printIntList(t->dimensions);
-	printf("\n");
 }

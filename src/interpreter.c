@@ -6,9 +6,10 @@
 #include "symbol.h"
 #include "interpreter.h"
 #define DEBUG_INTERPRETER
+
+struct _vector *traversalNode(struct _node *);
+
 /*int a,b,c; a=2; b=3; c=a+b*2;*/
-void interpretTypeInfo(struct _node *);
-void interpretAssign(struct _node *);
 void interpret(struct _statementList *list){
 	int i;
 	for(i=0;i<list->numberElement;i++){
@@ -28,9 +29,10 @@ void interpretTypeInfo(struct _node *n){
 		work=work->bro;
 	}
 }
-int traversalNode(struct _node *n){
-	int a,b;
-	int rz=0;
+struct _vector *traversalNode(struct _node *n){
+	struct _vector *a, *b, *rz;
+	int tmp;
+	struct _vector *v;
 	#ifdef DEBUG_INTERPRETER
 	char buf[256];
 	printf("traversalNode %s(%d) s:%d, b:%d\n", convertTag(n->tag,buf),n,n->son,n->bro);
@@ -40,17 +42,18 @@ int traversalNode(struct _node *n){
 		interpretTypeInfo(n);
 		break;
 	case ASS_OP:
-		a=n->val;//symbol index
+		tmp=n->val;//symbol index
 		b=traversalNode(n->son);//saved value
 		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode Assign value %d to %d\n", b, a);
+		printf("traversalNode Assign value %d to %d\n", b, tmp);
 		#endif
-		setValueSymbol(a, b);
+		setValueSymbol(tmp, b);
 		break;
 	case ADD_OP:
 		a=traversalNode(n->son);
 		b=traversalNode(n->son->bro);
-		rz=a+b;
+		rz=mkVector(a->type);
+		addVector(rz, a, b);
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode ADD_OP(%d=%d+%d)\n", rz, a, b);
 		#endif
@@ -58,7 +61,7 @@ int traversalNode(struct _node *n){
 	case MUL_OP:
 		a=traversalNode(n->son);
 		b=traversalNode(n->son->bro);
-		rz=a*b;
+		multiplyVector(rz, a, b);
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode ADD_OP(%d=%d*%d)\n", rz, a, b);
 		#endif
@@ -70,7 +73,9 @@ int traversalNode(struct _node *n){
 		#endif
 		break;
 	case NUMBER:
-		rz = n->val;
+		v=mkVector(integer);
+		insertElement(v, n->val);
+		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);
 		#endif

@@ -9,4 +9,6 @@ struct _type{
 struct _type *mkType(int type);
 void setDimensionType(struct _type *, struct _intList * );
 void printType(struct _type *);
+int initScalarType();
+extern struct _type *integer;
 #endif

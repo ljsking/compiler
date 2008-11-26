@@ -7,6 +7,7 @@
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
 "int"	{yylval.intVal = INT; return(INT); }
 "bool"  {yylval.intVal = BOOL; return(BOOL); }
+"print" {return (PRINT);}
 [a-zA-Z]+ {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ,		{return(COMMA);}

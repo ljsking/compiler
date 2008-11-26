@@ -15,4 +15,5 @@ int setValueSymbol(int, struct _vector *);
 struct _vector *getValueSymbol(int);
 struct _type *getTypeSymbol(int);
 void printSymbol(struct _symbol *);
+void printSymbolByIndex(int);
 #endif

@@ -5,7 +5,7 @@
 #include "type.h"
 #include "symbol.h"
 #include "interpreter.h"
-#define DEBUG_INTERPRETER
+//#define DEBUG_INTERPRETER
 
 struct _vector *traversalNode(struct _node *);
 
@@ -35,7 +35,7 @@ struct _vector *traversalNode(struct _node *n){
 	struct _vector *v;
 	#ifdef DEBUG_INTERPRETER
 	char buf[256];
-	printf("traversalNode %s(%d) s:%d, b:%d\n", convertTag(n->tag,buf),n,n->son,n->bro);
+	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
 	#endif
 	switch(n->tag){
 	case TypeInfo:
@@ -79,6 +79,12 @@ struct _vector *traversalNode(struct _node *n){
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);
 		#endif
+		break;
+	case PRINT:
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode PRINT(%d)\n",n->val);
+		#endif
+		printSymbolByIndex(n->val);
 		break;
 	}
 	return rz;

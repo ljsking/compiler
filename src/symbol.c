@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol.h"
-#define DEBUG_SYMBOL
+//#define DEBUG_SYMBOL
 struct _symbol **symbolTable;
 int nextSymbol = 0;
 int isDuplicated(char *id)
@@ -82,4 +82,7 @@ void printSymbol(struct _symbol *s){
 		printType(s->type);
 	if(s->vector)
 		printVector(s->vector);
+}
+void printSymbolByIndex(int index){
+	printSymbol(symbolTable[index]);
 }

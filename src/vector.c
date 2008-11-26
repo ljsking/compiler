@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "vector.h"
-#define DEBUG_VECTOR
+//#define DEBUG_VECTOR
 struct _vector *mkVector(struct _type *t){
 	struct _vector *v = malloc(sizeof(struct _vector));
 	v->type = t;

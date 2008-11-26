@@ -34,7 +34,7 @@
 %token <intVal> LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
 %token <intVal> INC_OP DEC_OP
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET
+%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET PRINT
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -85,6 +85,7 @@ Statements	: Statements Statement 	{
 
 Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 			| ID ASS_OP Exp SEMICOLONE { $$=mkStatementListWithVal(mktree($2, $1, 0, $3));}
+			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -185,6 +186,8 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "type");break;
 	case IDList:
 		strcpy(buff, "ids");break;
+	case PRINT:
+		strcpy(buff, "prnt");break;
 	default:
 		strcpy(buff, "");break;
 	}

@@ -4,7 +4,7 @@
 #include "statementList.h"
 struct _statementList *mkStatementList(){
 	struct _statementList *list = malloc(sizeof(struct _statementList));
-	#ifdef DEBUG_LIST
+	#ifdef DEBUG_STATEMENT_LIST
 	printf("malloc list %d\n", list);
 	#endif
 	list->maxElement = 10;
@@ -18,7 +18,7 @@ struct _statementList *mkStatementListWithVal(struct _node *val){
 }
 void			freeStatementList(struct _statementList *list){
 	int i;
-	#ifdef DEBUG_LIST
+	#ifdef DEBUG_STATEMENT_LIST
 	printf("free list %d\n", list);
 	#endif
 	free(list->elements);
@@ -45,6 +45,5 @@ void			printStatementList(struct _statementList *list){
 		printf("\n%d>",i);
 		printnode(list->elements[i],1,0);
 	}
-		
 	printf("\n");
 }

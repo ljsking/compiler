@@ -5,23 +5,14 @@
 #include "type.h"
 #include "symbol.h"
 #include "interpreter.h"
-
-/*int a,b,c; a=2; b=3; c=a+b;*/
+#define DEBUG_INTERPRETER
+/*int a,b,c; a=2; b=3; c=a+b*2;*/
 void interpretTypeInfo(struct _node *);
 void interpretAssign(struct _node *);
-void interpretNode(struct _node *n){
-	switch(n->tag){
-	case TypeInfo:
-		interpretTypeInfo(n);
-		break;
-	case ASS_OP:
-		interpretAssign(n);
-	}
-}
 void interpret(struct _statementList *list){
 	int i;
 	for(i=0;i<list->numberElement;i++){
-		interpretNode(list->elements[i]);
+		traversalNode(list->elements[i]);
 	}
 }
 void interpretTypeInfo(struct _node *n){
@@ -37,19 +28,53 @@ void interpretTypeInfo(struct _node *n){
 		work=work->bro;
 	}
 }
-void interpretAssign(struct _node *n){
+int traversalNode(struct _node *n){
+	int a,b;
+	int rz=0;
+	#ifdef DEBUG_INTERPRETER
 	char buf[256];
-	int symbolIndex = n->val;
-	struct _node *work;
-	if(n->son->tag==NUMBER){
-		work=n->son;
-		if(setValueSymbol(symbolIndex, n->son->val))
-		{
-			printf("Use not declared symbol!\n");
-			exit(-1);
-		}
-	}else{
-		printf("Assignment error\n");
-		exit(-1);
+	printf("traversalNode %s(%d) s:%d, b:%d\n", convertTag(n->tag,buf),n,n->son,n->bro);
+	#endif
+	switch(n->tag){
+	case TypeInfo:
+		interpretTypeInfo(n);
+		break;
+	case ASS_OP:
+		a=n->val;//symbol index
+		b=traversalNode(n->son);//saved value
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode Assign value %d to %d\n", b, a);
+		#endif
+		setValueSymbol(a, b);
+		break;
+	case ADD_OP:
+		a=traversalNode(n->son);
+		b=traversalNode(n->son->bro);
+		rz=a+b;
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode ADD_OP(%d=%d+%d)\n", rz, a, b);
+		#endif
+		break;
+	case MUL_OP:
+		a=traversalNode(n->son);
+		b=traversalNode(n->son->bro);
+		rz=a*b;
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode ADD_OP(%d=%d*%d)\n", rz, a, b);
+		#endif
+		break;
+	case ID:
+		rz=getValueSymbol(n->val);
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode getValFromSymbol(%d:%d)\n",n->val, rz);
+		#endif
+		break;
+	case NUMBER:
+		rz = n->val;
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode NUMBER(%d)\n",n->val);
+		#endif
+		break;
 	}
+	return rz;
 }

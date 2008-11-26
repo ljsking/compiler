@@ -2,3 +2,4 @@
 compiler
 *.yy.c
 *.tab.*
+*.tmproj

@@ -11,4 +11,5 @@ extern int nextSymbol;
 int insertSymbolTable(char *);
 void setTypeSymbol(int index, struct _type *type);
 int setValueSymbol(int index, int value);
+int getValueSymbol(int index);
 #endif

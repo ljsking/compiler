@@ -10,7 +10,7 @@ int isDuplicated(char *id)
 	int i;
 	for(i=0;i<nextSymbol;i++){
 		#ifdef DEBUG_SYMBOL
-		printf("compare %s and %s\n", id, symbolTable[i]->id);
+		printf("SYM: compare %s and %s\n", id, symbolTable[i]->id);
 		#endif
 		if(0==strcmp(id, symbolTable[i]->id)){
 			return i;
@@ -37,7 +37,7 @@ int insertSymbolTable(char *id)
 	symbolTable[nextSymbol]->type = 0;
 	symbolTable[nextSymbol]->val = 0;
 	#ifdef DEBUG_SYMBOL
-	printf("%d symbol is malloc in %d\n", nextSymbol, symbolTable[nextSymbol]);
+	printf("SYM: %d symbol is malloc in %d\n", nextSymbol, symbolTable[nextSymbol]);
 	#endif
 	nextSymbol++;
 	return nextSymbol-1;
@@ -45,14 +45,20 @@ int insertSymbolTable(char *id)
 void setTypeSymbol(int index, struct _type *type){
 	symbolTable[index]->type = type;
 	#ifdef DEBUG_SYMBOL
-	printf("%d symbol set type %d\n", index, symbolTable[index]->type);
+	printf("SYM: %d symbol set type %d\n", index, symbolTable[index]->type);
 	#endif
 }
 int setValueSymbol(int index, int val){
-	#ifdef DEBUG_SYMBOL
-	printf("%d(%d) symbol set value %d\n", index, symbolTable[index]->type, val);
-	#endif
 	if(symbolTable[index]->type==0) return -1;
 	symbolTable[index]->val = val;
+	#ifdef DEBUG_SYMBOL
+	printf("SYM: %d(%d) symbol set value %d\n", index, symbolTable[index]->type, symbolTable[index]->val);
+	#endif
 	return 0;
+}
+int getValueSymbol(int index){
+	#ifdef DEBUG_SYMBOL
+	printf("SYM: %d(%d) symbol get value %d\n", index, symbolTable[index]->type, symbolTable[index]->val);
+	#endif
+	return symbolTable[index]->val;
 }

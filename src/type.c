@@ -6,7 +6,7 @@ int initScalarType()
 {
 	integer=(struct _type *)malloc(sizeof(struct _type));
 	integer->vector = 0;
-	mkIntList(integer->dimensions);
+	integer->dimensions=mkIntList();
 }
 struct _type *mkType(int type)
 {

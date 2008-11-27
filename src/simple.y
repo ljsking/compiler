@@ -69,10 +69,10 @@ ScalarType : INT {$$=mkType($1);}
 VectorType : ScalarType OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET {
 	setDimensionType($1, $3);
 }
-NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1) }
+NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1); }
 		   	 | NumberList COMMA NUMBER { insertIntList($1, $3); $$=$1; }
 	
-IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1))}
+IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
 
 Statements	: Statements Statement 	{ 
@@ -114,8 +114,8 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET	{ $$=$2;}
 	;
 	
-Vector	:	NUMBER  { $$=mkleaf(NUMBER, $1);}
-		|	OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET { $$=mkleaf(NUMBER, (int)$2);}
+Vector	:	NUMBER  { $$=mkleaf(Vector, (int)mkIntList()); insertIntList((struct _intList*)($$->val), $1); }
+		|	OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET { $$=mkleaf(Vector, (int)$2);}
 		;
 %%
 

@@ -9,14 +9,17 @@
 
 struct _vector *traversalNode(struct _node *);
 
-/*int a,b,c; a=2; b=3; c=a+b; print(c);*/
+/*
+int a; a=[1,2,3]; print(a);
+int a,b,c; a=2; b=3; c=a+b; print(c);
+*/
 void interpret(struct _statementList *list){
 	int i;
 	for(i=0;i<list->numberElement;i++){
 		traversalNode(list->elements[i]);
 	}
 }
-void interpretTypeInfo(struct _node *n){
+void interpretTypeInfo(struct _node *n){ 
 	struct _type *t = (struct _type *)n->val;
 	struct _node *work = n->son;
 	if(!work||!work->son){
@@ -74,7 +77,15 @@ struct _vector *traversalNode(struct _node *n){
 		break;
 	case NUMBER:
 		v=mkVector(integer);
-		insertElement(v, n->val);
+		insertElementVector(v, n->val);
+		rz=v;
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode NUMBER(%d)\n",n->val);
+		#endif
+		break;
+	case Vector:
+		v=mkVector(integer);
+		setElementsVector(v, (struct _intList *)n->val);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);

@@ -16,18 +16,29 @@ int addVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	int tmp1,tmp2;
 	tmp1=getElement(a, 0);
 	tmp2=getElement(b, 0);
-	insertElement(dst, tmp1+tmp2);
+	insertElementVector(dst, tmp1+tmp2);
 }
 
 int multiplyVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	
 }
 
-int insertElement(struct _vector *v, int val){
+int insertElementVector(struct _vector *v, int val){
 	#ifdef DEBUG_VECTOR
-	printf("VECTOR: insertElement %d in %d.%d\n", val, v, v->elements);
+	printf("VECTOR: insertElementVector %d in %d.%d\n", val, v, v->elements);
 	#endif
 	insertIntList(v->elements, val);
+	#ifdef DEBUG_VECTOR
+	printVector(v);
+	#endif
+}
+
+int setElementsVector(struct _vector *v, struct _intList *val){
+	#ifdef DEBUG_VECTOR
+	printf("VECTOR: setElementsVector %d in %d.%d\n", val, v, v->elements);
+	#endif
+	freeIntList(v->elements);
+	v->elements = val;
 	#ifdef DEBUG_VECTOR
 	printVector(v);
 	#endif

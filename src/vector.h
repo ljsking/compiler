@@ -6,7 +6,8 @@ struct _vector{
 	struct _intList	*elements;
 };
 struct _vector *mkVector(struct _type *);
-int insertElement(struct _vector *, int);
+int insertElementVector(struct _vector *, int);
+int setElementsVector(struct _vector *, struct _intList *);
 int addVector(struct _vector *, struct _vector *, struct _vector *);
 int multiplyVector(struct _vector *, struct _vector *, struct _vector *);
 void printVector(struct _vector *);

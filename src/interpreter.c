@@ -9,7 +9,7 @@
 
 struct _vector *traversalNode(struct _node *);
 
-/*int a,b,c; a=2; b=3; c=a+b*2;*/
+/*int a,b,c; a=2; b=3; c=a+b; print(c);*/
 void interpret(struct _statementList *list){
 	int i;
 	for(i=0;i<list->numberElement;i++){

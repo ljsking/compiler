@@ -22,9 +22,9 @@
 	struct _statementList *stmtList;
 }
 %type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement
-%type  <nodeVal> IDList Exp Term
+%type  <nodeVal> IDList Exp Term Vector
 %type  <typeVal> Type ScalarType VectorType
-%type  <intList> Dimensions Dimension
+%type  <intList> NumberList
 
 %token <intVal> ID INT BOOL NUMBER
 %token <intVal> ASS_OP
@@ -66,12 +66,11 @@ Type : ScalarType
 ScalarType : INT {$$=mkType($1);}
 		   | BOOL {$$=mkType($1);}
 		
-VectorType : ScalarType OPEN_SQUARE_BRACKET Dimensions CLOSE_SQUARE_BRACKET {
+VectorType : ScalarType OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET {
 	setDimensionType($1, $3);
 }
-Dimensions : Dimension
-		   | Dimensions COMMA Dimension { insertIntList($1, $3->elements[0]); freeIntList($3); $$=$1; }
-Dimension  : NUMBER{ $$=mkIntList(); insertIntList($$, $1) }
+NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1) }
+		   	 | NumberList COMMA NUMBER { insertIntList($1, $3); $$=$1; }
 	
 IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1))}
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
@@ -110,10 +109,14 @@ Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 	| NOT_OP Term		{ $$=mktree($1, 0, 0, $2);}
-	| NUMBER			{ $$=mkleaf(NUMBER, $1);}
+	| Vector			
 	| ID				{ $$=mkleaf(ID, $1);}
 	| OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET	{ $$=$2;}
 	;
+	
+Vector	:	NUMBER  { $$=mkleaf(NUMBER, $1);}
+		|	OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET { $$=mkleaf(NUMBER, (int)$2);}
+		;
 %%
 
 int yyerror() { puts("syntax error!"); }

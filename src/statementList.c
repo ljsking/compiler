@@ -15,7 +15,9 @@ struct _statementList *mkStatementList(){
 }
 struct _statementList *mkStatementListWithVal(struct _node *val){
 	struct _statementList *list = mkStatementList();
+	#ifdef DEBUG_STATEMENT_LIST
 	printf("mkStatementListWithVal to %d (%d/%d) \n", list, list->numberElement, list->maxElement);
+	#endif
 	insertStatementList(list, val);
 	return list;
 }
@@ -41,6 +43,9 @@ void 			insertStatementList(struct _statementList *list, struct _node *val){
 void	 		mergeStatementList(struct _statementList *l1,struct _statementList *l2)
 {
 	int i;
+	#ifdef DEBUG_STATEMENT_LIST
+	printf("mergeStatementList %d, %d\n", l1, l2);
+	#endif
 	for(i=0;i<l2->numberElement;i++)
 		insertStatementList(l1,l2->elements[i]);
 }

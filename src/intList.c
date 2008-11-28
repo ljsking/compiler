@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "intList.h"
-#define DEBUG_LIST
+//#define DEBUG_LIST
 
 struct _intList *mkIntList(){
 	struct _intList *list = malloc(sizeof(struct _intList));

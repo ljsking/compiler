@@ -11,6 +11,7 @@ struct _intList *mkIntList(){
 	#ifdef DEBUG_LIST
 	printf("malloc IntList %d (%d/%d)\n", list, list->numberElement, list->maxElement);
 	#endif
+	return list;
 }
 void			freeIntList(struct _intList *list){
 	#ifdef DEBUG_LIST
@@ -21,7 +22,7 @@ void			freeIntList(struct _intList *list){
 }
 void 			insertIntList(struct _intList *list, int val){
 	#ifdef DEBUG_LIST
-	printf("insert in IntList\n");
+	printf("insert in IntList(%d)\n", list);
 	printf("insertIntList %d now:%d max:%d\n", list, list->numberElement, list->maxElement);
 	#endif
 	if(list->numberElement == list->maxElement){

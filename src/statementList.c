@@ -2,31 +2,37 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "statementList.h"
+//#define DEBUG_STATEMENT_LIST
 struct _statementList *mkStatementList(){
 	struct _statementList *list = malloc(sizeof(struct _statementList));
-	#ifdef DEBUG_STATEMENT_LIST
-	printf("malloc list %d\n", list);
-	#endif
 	list->maxElement = 10;
 	list->numberElement = 0;
 	list->elements = malloc(sizeof(struct _node *)*10);
+	#ifdef DEBUG_STATEMENT_LIST
+	printf("malloc StatementList %d (%d/%d) \n", list, list->numberElement, list->maxElement);
+	#endif
+	return list;
 }
 struct _statementList *mkStatementListWithVal(struct _node *val){
 	struct _statementList *list = mkStatementList();
+	printf("mkStatementListWithVal to %d (%d/%d) \n", list, list->numberElement, list->maxElement);
 	insertStatementList(list, val);
 	return list;
 }
 void			freeStatementList(struct _statementList *list){
 	int i;
 	#ifdef DEBUG_STATEMENT_LIST
-	printf("free list %d\n", list);
+	printf("free StatementList %d\n", list);
 	#endif
 	free(list->elements);
 	free(list);
 }
 void 			insertStatementList(struct _statementList *list, struct _node *val){
+	#ifdef DEBUG_STATEMENT_LIST
+	printf("insertStatementList to %d (%d/%d) \n", list, list->numberElement, list->maxElement);
+	#endif
 	if(list->numberElement == list->maxElement){
-		printf("exceed number of elements\n");
+		printf("exceed number of elements in StatementList\n");
 		exit(-1);
 	}
 	list->elements[list->numberElement] = val;

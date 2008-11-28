@@ -13,4 +13,3 @@ lex.yy.c: simple.l
 simple.tab.c: simple.y
 	bison simple.y -d
 	
-

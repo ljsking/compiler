@@ -10,6 +10,8 @@
 	#include "symbol.h"
 	#include "simple.h"
 	struct _statementList *root;
+	struct _statementList *mkAssignmentStatementWithoutVal(int, struct _node *);
+	struct _statementList *mkAssignmentStatement(int, struct _node *, struct _intList *);
 %}
 
 %union {
@@ -63,17 +65,19 @@ DeclareStatement : Type IDList SEMICOLONE {
 Type : ScalarType
 	 | VectorType
 	
-ScalarType : INT {$$=mkType($1);}
-		   | BOOL {$$=mkType($1);}
+ScalarType : INT {$$=integer;}
+		   | BOOL {$$=boolean;}
 		
 VectorType : ScalarType OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET {
-	setDimensionType($1, $3);
-}
+					setDimensionType($1, $3);
+				}
+		   ;
 NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1); }
 		   	 | NumberList COMMA NUMBER { insertIntList($1, $3); $$=$1; }
 	
 IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
+	   ;
 
 Statements	: Statements Statement 	{ 
 							mergeStatementList($1,$2); 
@@ -81,9 +85,13 @@ Statements	: Statements Statement 	{
 							$$=$1;
 						}
 			| Statement
+			;
 
 Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
-			| ID ASS_OP Exp SEMICOLONE { $$=mkStatementListWithVal(mktree($2, $1, 0, $3));}
+			| ID ASS_OP Exp SEMICOLONE { $$=mkAssignmentStatementWithoutVal($1, $3) }
+			| ID OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE{
+				$$=mkAssignmentStatement($1, $6, $3);
+			}
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -129,10 +137,20 @@ int main() {
 	return 0;
 }
 
+struct _statementList *mkAssignmentStatementWithoutVal(int id, struct _node *exp){
+	struct _intList *list=mkIntList(); 
+	insertIntList(list, 0);
+	return mkAssignmentStatement(id, exp, list);
+}
+
+struct _statementList *mkAssignmentStatement(int id, struct _node *exp, struct _intList *val){
+	return mkStatementListWithVal(mktree(ASS_OP, id, exp, mkleaf(NumberList, (int)val)));
+}
 
 
 char *convertTag(int token, char *buff)
 {
+	printf("convertTag token %d buff %d\n", token, buff);
 	switch(token)
 	{
 	case ADD_OP:

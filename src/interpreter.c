@@ -46,7 +46,7 @@ struct _vector *traversalNode(struct _node *n){
 		break;
 	case ASS_OP:
 		tmp=n->val;//symbol index
-		b=traversalNode(n->son);//saved value
+		b=traversalNode(n->son->bro);//saved value
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode Assign value %d to %d\n", b, tmp);
 		#endif

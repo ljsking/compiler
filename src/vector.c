@@ -64,12 +64,13 @@ int setElementsVector(struct _vector *v, struct _intList *val){
 }
 
 int getElementVector(struct _vector *v, int argc, ...){
-	#ifdef DEBUG_VECTOR
-	printf("VECTOR: getElement %d in %d\n", index, v);
-	#endif
 	register int i;
 	int args;
 	va_list ap;
+	
+	#ifdef DEBUG_VECTOR
+	printf("VECTOR: getElement argument count: %d in %d\n", index, v);
+	#endif
 
 	printf("getElementVector \n");
 	va_start(ap, argc);

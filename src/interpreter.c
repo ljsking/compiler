@@ -28,7 +28,7 @@ void interpretTypeInfo(struct _node *n){
 	}
 	work=work->son;
 	while(work){
-		setTypeSymbol(work->val, t);
+		initializeSymbol(work->val, t);
 		work=work->bro;
 	}
 }

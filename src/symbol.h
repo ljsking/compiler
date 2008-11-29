@@ -10,6 +10,7 @@ struct _symbol {
 extern struct _symbol **symbolTable;
 extern int nextSymbol;
 int insertSymbolTable(char *);
+void initializeSymbol(int, struct _type *);
 void setTypeSymbol(int, struct _type *);
 int setValueSymbol(int, struct _vector *);
 struct _vector *getValueSymbol(int);

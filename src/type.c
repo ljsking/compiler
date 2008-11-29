@@ -36,8 +36,15 @@ struct _type *mkType(int type)
 void setDimensionType(struct _type *t, struct _intList *dimensions){
 	t->dimensions = dimensions;
 }
+int numberOfElementsType(struct _type *t){
+	int i, rz=1;
+	for(i=0;i<t->dimensions->numberElement;i++){
+		rz*=getIntList(t->dimensions, i);
+	}
+	return rz;
+}
 void printType(struct _type *t){
 	char buf[256];
-	printf("\nType:%s",convertTag(t->type, buf));
+	printf("\nType:%s ",convertTag(t->type, buf));
 	printIntList(t->dimensions);
 }

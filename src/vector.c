@@ -5,9 +5,13 @@
 #include "vector.h"
 //#define DEBUG_VECTOR
 struct _vector *mkVector(struct _type *t){
+	int numberOfElements, i;
 	struct _vector *v = malloc(sizeof(struct _vector));
 	v->type = t;
 	v->elements=mkIntList();
+	numberOfElements = numberOfElementsType(t);
+	for(i=0;i<numberOfElements;i++)
+		insertElementVector(v, 0);
 	#ifdef DEBUG_VECTOR
 	printf("malloc vector %d\n", v);
 	#endif

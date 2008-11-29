@@ -150,7 +150,6 @@ struct _statementList *mkAssignmentStatement(int id, struct _node *exp, struct _
 
 char *convertTag(int token, char *buff)
 {
-	printf("convertTag token %d buff %d\n", token, buff);
 	switch(token)
 	{
 	case ADD_OP:

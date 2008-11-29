@@ -49,4 +49,5 @@ void			printIntList(struct _intList *list){
 	printf("list:%d, now:%d, max:%d\n", list, list->numberElement, list->maxElement);
 	for(i=0;i<list->numberElement;i++)
 		printf("%d, ", list->elements[i]);
+	printf("\n");
 }

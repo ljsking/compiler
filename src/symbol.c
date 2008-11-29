@@ -21,6 +21,7 @@ int isDuplicated(char *id)
 int insertSymbolTable(char *id)
 {
 	int i;
+	char *buf;
 	if(nextSymbol>MAX_SYMBOL_SIZE){
 		printf("The number of symbol is exceeded\n");
 		exit(-1);
@@ -30,7 +31,7 @@ int insertSymbolTable(char *id)
 	{
 		return i;
 	}
-	char *buf = (char *)malloc(strlen(id));
+	buf = (char *)malloc(strlen(id));
 	strcpy(buf, id);
 	symbolTable[nextSymbol]=(struct _symbol *)malloc(sizeof(struct _symbol));
 	symbolTable[nextSymbol]->id = buf;
@@ -41,6 +42,18 @@ int insertSymbolTable(char *id)
 	#endif
 	nextSymbol++;
 	return nextSymbol-1;
+}
+void initializeSymbol(int index, struct _type *type){
+	int numberOfElements;
+	int i;
+	struct _symbol *symbol = symbolTable[index];
+	setTypeSymbol(index, type);
+	symbol->vector = mkVector(symbol->type);
+	#ifdef DEBUG_SYMBOL
+	printf("SYM: %d symbol initialize type %d\n", index, symbolTable[index]->type);
+	printSymbol(symbolTable[index]);
+	printf("\n");
+	#endif
 }
 void setTypeSymbol(int index, struct _type *type){
 	symbolTable[index]->type = type;
@@ -77,7 +90,7 @@ struct _type *getTypeSymbol(int index){
 	return symbolTable[index]->type;
 }
 void printSymbol(struct _symbol *s){
-	printf("symbol %s ", s->id);
+	printf("symbol %s t:%d v:%d", s->id, s->type, s->vector);
 	if(s->type)
 		printType(s->type);
 	if(s->vector)

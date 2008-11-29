@@ -10,6 +10,7 @@ struct _statementList *mkStatementList(){
 	list->maxElement = 10;
 	list->numberElement = 0;
 	list->elements = malloc(sizeof(struct _node *)*10);
+	return list;
 }
 struct _statementList *mkStatementListWithVal(struct _node *val){
 	struct _statementList *list = mkStatementList();

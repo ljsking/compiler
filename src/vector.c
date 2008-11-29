@@ -19,8 +19,25 @@ int addVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	insertElementVector(dst, tmp1+tmp2);
 }
 
+int subVector(struct _vector *dst, struct _vector *a, struct _vector *b){
+	int tmp1,tmp2;
+	tmp1=getElement(a, 0);
+	tmp2=getElement(b, 0);
+	insertElementVector(dst, tmp1-tmp2);
+}
+
 int multiplyVector(struct _vector *dst, struct _vector *a, struct _vector *b){
-	
+	int tmp1,tmp2;
+	tmp1=getElement(a, 0);
+	tmp2=getElement(b, 0);
+	insertElementVector(dst, tmp1*tmp2);
+}
+
+int divideVector(struct _vector *dst, struct _vector *a, struct _vector *b){
+	int tmp1,tmp2;
+	tmp1=getElement(a, 0);
+	tmp2=getElement(b, 0);
+	insertElementVector(dst, tmp1/tmp2);
 }
 
 int insertElementVector(struct _vector *v, int val){

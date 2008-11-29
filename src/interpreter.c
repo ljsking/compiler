@@ -19,7 +19,7 @@ void interpret(struct _statementList *list){
 		traversalNode(list->elements[i]);
 	}
 }
-void interpretTypeInfo(struct _node *n){ 
+void interpretTypeInfo(struct _node *n){
 	struct _type *t = (struct _type *)n->val;
 	struct _node *work = n->son;
 	if(!work||!work->son){
@@ -61,12 +61,29 @@ struct _vector *traversalNode(struct _node *n){
 		printf("traversalNode ADD_OP(%d=%d+%d)\n", rz, a, b);
 		#endif
 		break;
+	case SUB_OP:
+		a=traversalNode(n->son);
+		b=traversalNode(n->son->bro);
+		rz=mkVector(a->type);
+		subVector(rz, a, b);
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode SUB_OP(%d=%d+%d)\n", rz, a, b);
+		#endif
+		break;
 	case MUL_OP:
 		a=traversalNode(n->son);
 		b=traversalNode(n->son->bro);
 		multiplyVector(rz, a, b);
 		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode ADD_OP(%d=%d*%d)\n", rz, a, b);
+		printf("traversalNode MUL_OP(%d=%d*%d)\n", rz, a, b);
+		#endif
+		break;
+	case DIV_OP:
+		a=traversalNode(n->son);
+		b=traversalNode(n->son->bro);
+		divideVector(rz, a, b);
+		#ifdef DEBUG_INTERPRETER
+		printf("traversalNode DIV_OP(%d=%d*%d)\n", rz, a, b);
 		#endif
 		break;
 	case ID:
@@ -88,7 +105,7 @@ struct _vector *traversalNode(struct _node *n){
 		setElementsVector(v, (struct _intList *)n->val);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode NUMBER(%d)\n",n->val);
+		printf("traversalNode Vector(%d)\n",n->val);
 		#endif
 		break;
 	case PRINT:

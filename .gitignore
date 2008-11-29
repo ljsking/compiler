@@ -3,3 +3,5 @@ compiler
 *.yy.c
 *.tab.*
 *.tmproj
+*.exe
+*.stackdump

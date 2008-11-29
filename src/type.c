@@ -39,6 +39,5 @@ void setDimensionType(struct _type *t, struct _intList *dimensions){
 void printType(struct _type *t){
 	char buf[256];
 	printf("\nType:%s",convertTag(t->type, buf));
-	printf("Type is %d, dimensions is %d\n", t, t->dimensions);
 	printIntList(t->dimensions);
 }

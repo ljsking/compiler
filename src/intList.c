@@ -2,30 +2,32 @@
 #include <stdio.h>
 
 #include "intList.h"
+//#define DEBUG_LIST
 
 struct _intList *mkIntList(){
 	struct _intList *list = malloc(sizeof(struct _intList));
-	#ifdef DEBUG_LIST
-	printf("malloc list %d\n", list);
-	#endif
 	list->maxElement = 10;
 	list->numberElement = 0;
 	list->elements = malloc(sizeof(int)*10);
+	#ifdef DEBUG_LIST
+	printf("malloc IntList %d (%d/%d)\n", list, list->numberElement, list->maxElement);
+	#endif
 	return list;
 }
 void			freeIntList(struct _intList *list){
 	#ifdef DEBUG_LIST
-	printf("free list %d\n", list);
+	printf("free IntList %d\n", list);
 	#endif
 	free(list->elements);
 	free(list);
 }
 void 			insertIntList(struct _intList *list, int val){
 	#ifdef DEBUG_LIST
+	printf("insert in IntList(%d)\n", list);
 	printf("insertIntList %d now:%d max:%d\n", list, list->numberElement, list->maxElement);
 	#endif
 	if(list->numberElement == list->maxElement){
-		printf("exceed number of elements\n");
+		printf("exceed number of elements in IntList\n");
 		exit(-1);
 	}
 	list->elements[list->numberElement] = val;
@@ -33,6 +35,7 @@ void 			insertIntList(struct _intList *list, int val){
 }
 int				getIntList(struct _intList *list, int index){
 	#ifdef DEBUG_LIST
+	printf("get IntList");
 	printf("getIntList %d now:%d max:%d\n", list, list->numberElement, list->maxElement);
 	#endif
 	if(list->numberElement < index){

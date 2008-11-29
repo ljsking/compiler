@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
+
 #include "vector.h"
 //#define DEBUG_VECTOR
 struct _vector *mkVector(struct _type *t){
@@ -14,29 +16,29 @@ struct _vector *mkVector(struct _type *t){
 
 int addVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	int tmp1,tmp2;
-	tmp1=getElement(a, 0);
-	tmp2=getElement(b, 0);
+	tmp1=getElementVector(a, 1, 0);
+	tmp2=getElementVector(b, 1, 0);
 	insertElementVector(dst, tmp1+tmp2);
 }
 
 int subVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	int tmp1,tmp2;
-	tmp1=getElement(a, 0);
-	tmp2=getElement(b, 0);
+	tmp1=getElementVector(a, 1, 0);
+	tmp2=getElementVector(b, 1, 0);
 	insertElementVector(dst, tmp1-tmp2);
 }
 
 int multiplyVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	int tmp1,tmp2;
-	tmp1=getElement(a, 0);
-	tmp2=getElement(b, 0);
+	tmp1=getElementVector(a, 1, 0);
+	tmp2=getElementVector(b, 1, 0);
 	insertElementVector(dst, tmp1*tmp2);
 }
 
 int divideVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 	int tmp1,tmp2;
-	tmp1=getElement(a, 0);
-	tmp2=getElement(b, 0);
+	tmp1=getElementVector(a, 1, 0);
+	tmp2=getElementVector(b, 1, 0);
 	insertElementVector(dst, tmp1/tmp2);
 }
 
@@ -61,11 +63,20 @@ int setElementsVector(struct _vector *v, struct _intList *val){
 	#endif
 }
 
-int getElement(struct _vector *v, int index){
+int getElementVector(struct _vector *v, int argc, ...){
 	#ifdef DEBUG_VECTOR
 	printf("VECTOR: getElement %d in %d\n", index, v);
 	#endif
-	return getIntList(v->elements, index);
+	register int i;
+	int args;
+	va_list ap;
+
+	printf("getElementVector \n");
+	va_start(ap, argc);
+	args = va_arg(ap, int);
+	va_end(ap);
+
+	return getIntList(v->elements, args);
 }
 
 void printVector(struct _vector *v)

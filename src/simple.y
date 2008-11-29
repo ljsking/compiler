@@ -36,7 +36,7 @@
 %token <intVal> LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
 %token <intVal> INC_OP DEC_OP
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET PRINT
+%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET OPEN_BRACKET CLOSE_BRACKET PRINT WHILE
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -93,7 +93,9 @@ Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 				$$=mkAssignmentStatement($1, $6, $3);
 			}
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
-
+			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mkleaf(WHILE,0));}
+			;
+			
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp LES_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -208,6 +210,8 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "ids");break;
 	case PRINT:
 		strcpy(buff, "prnt");break;
+	case WHILE:
+		strcpy(buff, "while");break;
 	default:
 		strcpy(buff, "");break;
 	}

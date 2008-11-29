@@ -8,6 +8,7 @@
 "int"	{yylval.intVal = INT; return(INT); }
 "bool"  {yylval.intVal = BOOL; return(BOOL); }
 "print" {return (PRINT);}
+"while"	{return (WHILE);}
 [a-zA-Z]+ {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ,		{return(COMMA);}
@@ -43,4 +44,6 @@
 \)		{yylval.intVal = CLOSE_ROUND_BRACKET; return(CLOSE_ROUND_BRACKET); };
 \[		{yylval.intVal = OPEN_SQUARE_BRACKET; return(OPEN_SQUARE_BRACKET); };
 \]		{yylval.intVal = CLOSE_SQUARE_BRACKET; return(CLOSE_SQUARE_BRACKET); };
+\{		{yylval.intVal = OPEN_BRACKET; return(OPEN_BRACKET); };
+\}		{yylval.intVal = CLOSE_BRACKET; return(CLOSE_BRACKET); };
 %%

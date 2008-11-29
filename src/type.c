@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "simple.tab.h"
+#include "intList.h"
 #include "type.h"
 struct _type *integer;
 struct _type *boolean;
@@ -40,6 +41,18 @@ int numberOfElementsType(struct _type *t){
 	int i, rz=1;
 	for(i=0;i<t->dimensions->numberElement;i++){
 		rz*=getIntList(t->dimensions, i);
+	}
+	return rz;
+}
+int getOffsetType(struct _type *t, int count, int *array){
+	int rz, i, tmp=1;
+	if(count!=t->dimensions->numberElement){
+		printf("size of dimensions is not same as count\n");
+		exit(-1);
+	}
+	for(i=0;i<count;i++){
+		rz+=tmp*array[i];
+		tmp*=t->dimensions->elements[i];
 	}
 	return rz;
 }

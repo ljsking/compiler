@@ -15,4 +15,5 @@ void			freeIntList(struct _intList *);
 void 			insertIntList(struct _intList *, int);
 void			printIntList(struct _intList *);
 int				getIntList(struct _intList *, int);
+void			setIntList(struct _intList *, int, int);
 #endif

@@ -44,6 +44,17 @@ int				getIntList(struct _intList *list, int index){
 	}
 	return list->elements[index];
 }
+void			setIntList(struct _intList *list, int val, int index){
+	#ifdef DEBUG_LIST
+	printf("set IntList");
+	printf("setIntList %d in %d now:%d max:%d\n", val, list, list->numberElement, list->maxElement);
+	#endif
+	if(list->numberElement < index){
+		printf("index is out of bound\n");
+		exit(-1);
+	}
+	list->elements[index] = val;
+}
 void			printIntList(struct _intList *list){
 	int i;
 	printf("list:%d, now:%d, max:%d\n", list, list->numberElement, list->maxElement);

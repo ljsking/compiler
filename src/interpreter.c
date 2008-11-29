@@ -94,7 +94,7 @@ struct _vector *traversalNode(struct _node *n){
 		break;
 	case NUMBER:
 		v=mkVector(integer);
-		insertElementVector(v, n->val);
+		setElementVector(v, n->val, 1, 0);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);

@@ -10,6 +10,7 @@ struct _intList *mkIntList(){
 	list->maxElement = 10;
 	list->numberElement = 0;
 	list->elements = malloc(sizeof(int)*10);
+	return list;
 }
 void			freeIntList(struct _intList *list){
 	#ifdef DEBUG_LIST

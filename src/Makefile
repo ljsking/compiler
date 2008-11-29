@@ -1,7 +1,7 @@
 TARGET = compiler
 CC = gcc
 
-$(TARGET): lex.yy.c simple.tab.c simple.h intList.c intList.h node.h node.c type.h type.c statementList.h statementList.c interpreter.h interpreter.c symbol.h symbol.c vector.h vector.c
+$(TARGET): lex.yy.c simple.tab.c simple.h intList.c intList.h node.h node.c type.h type.c statementList.h statementList.c interpreter.h interpreter.c symbol.h symbol.c vector.h vector.c test.c
 	$(CC) -o $(TARGET) lex.yy.c simple.tab.c intList.c node.c type.c statementList.c interpreter.c symbol.c vector.c -lfl
 
 clean:
@@ -12,5 +12,3 @@ lex.yy.c: simple.l
 	
 simple.tab.c: simple.y
 	bison simple.y -d
-	
-

@@ -110,10 +110,10 @@ ScalarExp	: ScalarExp ADD_OP ScalarTerm	{ $$=mktree(ScalarAdd, 0, $3, $1);}
 			| ScalarTerm					{ $$=$1;}
 			;
 	
-ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree(ScalarMul, 0, $3, $1);}
+			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree(ScalarDiv, 0, $3, $1);}
+			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree(ScalarMod, 0, $3, $1);}
+			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree(ScalarPow, 0, $3, $1);}
 			| ScalarTerm ELE_MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm ELE_DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm ELE_POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
@@ -215,6 +215,16 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "scalarData");break;
 	case ScalarAdd:
 		strcpy(buff, "scalarAdd");break;
+	case ScalarSub:
+		strcpy(buff, "scalarSub");break;
+	case ScalarMul:
+		strcpy(buff, "scalarMul");break;
+	case ScalarDiv:
+		strcpy(buff, "scalarDiv");break;
+	case ScalarMod:
+		strcpy(buff, "scalarMod");break;
+	case ScalarPow:
+		strcpy(buff, "scalarPow");break;
 	case ScalarAssign:
 		strcpy(buff, "scalarAssign");break;
 		

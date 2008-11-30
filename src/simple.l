@@ -5,6 +5,7 @@
 %}
 %%
 [0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
+\-[0-9]+	{yylval.intVal = atoi(yytext); return (INTEGER);}
 "int"	{yylval.intVal = INT; return(INT); }
 "bool"  {yylval.intVal = BOOL; return(BOOL); }
 "print" {return (PRINT);}

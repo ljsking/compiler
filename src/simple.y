@@ -29,7 +29,7 @@
 %type  <typeVal> Type
 %type  <intList> NumberList
 
-%token <intVal> ID INT BOOL NUMBER
+%token <intVal> ID INT BOOL NUMBER INTEGER
 %token <intVal> ASS_OP
 %token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
 %token <intVal> LES_OP GRT_OP NOT_OP
@@ -121,7 +121,7 @@ ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| DEC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
 			| NOT_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
 			| ID				{ $$=mkleaf(ScalarID, $1);}
-			| NUMBER			{ $$=mkleaf(ScalarData,$1);}
+			| INTEGER			{ $$=mkleaf(ScalarData,$1);}
 			;
 %%
 

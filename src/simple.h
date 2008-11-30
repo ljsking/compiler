@@ -20,6 +20,7 @@
 #define ScalarAnd		-17
 #define ScalarOr		-18
 #define ScalarData		-19
+#define VectorAssign	-20
 
 char *convertTag(int , char *);
 #endif

@@ -11,6 +11,7 @@
 	#include "simple.h"
 	struct _statementList *root;
 	struct _statementList *mkScalarAssignmentStatement(int, struct _node *);
+	struct _statementList *mkVectorAssignmentStatement(int, int, struct _node *);
 %}
 
 %union {
@@ -26,7 +27,6 @@
 %type  <nodeVal> IDList Exp ScalarTerm ScalarExp
 %type  <typeVal> Type
 %type  <intList> NumberList
-%type  <intVal>  ScalarID
 
 %token <intVal> ID INT BOOL NUMBER
 %token <intVal> ASS_OP
@@ -61,8 +61,6 @@ DeclareStatements : DeclareStatements DeclareStatement {
 DeclareStatement : Type IDList SEMICOLONE { 
 						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
 					}
-ScalarID 	: ID
-			;
 
 Type : INT {$$=mkScalarType(0);}
 	 | BOOL{$$=mkScalarType(1);}
@@ -88,7 +86,8 @@ Statements	: Statements Statement 	{
 			;
 
 Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
-			| ScalarID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
+			| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
+			| ID OPEN_SQUARE_BRACKET NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mkleaf(WHILE,0));}
 			;
@@ -118,7 +117,7 @@ ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| INC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
 			| DEC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
 			| NOT_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
-			| ScalarID			{ $$=mkleaf(ScalarID, $1);}
+			| ID				{ $$=mkleaf(ScalarID, $1);}
 			| NUMBER			{ $$=mkleaf(ScalarData,$1);}
 			;
 %%
@@ -136,6 +135,9 @@ struct _statementList *mkScalarAssignmentStatement(int id, struct _node *exp){
 	return mkStatementListWithVal(mktree(ScalarAssign, id, 0, exp));
 }
 
+struct _statementList *mkVectorAssignmentStatement(int id, int col, struct _node *exp){
+	return mkStatementListWithVal(mktree(VectorAssign, id, (struct _node *)col, exp));
+}
 
 char *convertTag(int token, char *buff)
 {

@@ -97,6 +97,11 @@ void setScalarDataSymbol(int index, int data){
 	Symbol *dst = symbolTable[index];
 	dst->data = (void *)data;
 }
+void setVectorDataSymbol(int index, int data, int col){
+	Symbol *dst = symbolTable[index];
+	VEC *v = (VEC *)dst->data;
+	v->ve[col]=data;
+}
 int getScalarSymbol(int index){
 	Symbol *dst = symbolTable[index];
 	#ifdef DEBUG_SYMBOL

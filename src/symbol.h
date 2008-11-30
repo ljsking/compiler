@@ -15,6 +15,7 @@ void initializeSymbol(int, struct _type *);
 void setTypeSymbol(int, struct _type *);
 int setValueSymbol(int, struct _vector *, struct _node*);
 void setScalarDataSymbol(int, int);
+void setVectorDataSymbol(int, int, int);
 int getScalarSymbol(int);
 struct _type *getTypeSymbol(int);
 void printSymbol(struct _symbol *);

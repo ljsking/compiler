@@ -14,6 +14,9 @@ int a;a=2+2;print(a);-ok
 int a;int[2]b;int[2,2]c;print(a);print(b);print(c);-ok
 int a;a=2;print(a);-ok
 int a,b,c; a=2; b=3; c=a+b; print(c);-ok
+int [3] v;v[0]=1;print(v); -ok
+
+int [3] v;v[0]=1;print(v); -ok
 
 int [3,2] a;a[1,1]=2;print(a); -no
 int a; a=[2,2]; print(a); -no
@@ -52,6 +55,11 @@ void *traversalNode(struct _node *n){
 	case ScalarAssign:
 		a=(int)traversalNode(n->son);
 		setScalarDataSymbol(n->val, a);
+		break;
+	case VectorAssign:
+		a=(int)traversalNode(n->son);
+		b=(int)n->bro;
+		setVectorDataSymbol(n->val, a, b);
 		break;
 	case ScalarAdd:
 		a=(int)traversalNode(n->son);

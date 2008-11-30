@@ -10,8 +10,7 @@
 	#include "symbol.h"
 	#include "simple.h"
 	struct _statementList *root;
-	struct _statementList *mkAssignmentStatementWithoutVal(int, struct _node *);
-	struct _statementList *mkAssignmentStatement(int, struct _node *, struct _intList *);
+	struct _statementList *mkScalarAssignmentStatement(int, struct _node *);
 %}
 
 %union {
@@ -24,9 +23,10 @@
 	struct _statementList *stmtList;
 }
 %type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement
-%type  <nodeVal> IDList Exp Term Vector
+%type  <nodeVal> IDList Exp ScalarTerm ScalarExp
 %type  <typeVal> Type
 %type  <intList> NumberList
+%type  <intVal>  ScalarID
 
 %token <intVal> ID INT BOOL NUMBER
 %token <intVal> ASS_OP
@@ -61,6 +61,8 @@ DeclareStatements : DeclareStatements DeclareStatement {
 DeclareStatement : Type IDList SEMICOLONE { 
 						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
 					}
+ScalarID 	: ID
+			;
 
 Type : INT {$$=mkScalarType(0);}
 	 | BOOL{$$=mkScalarType(1);}
@@ -86,45 +88,39 @@ Statements	: Statements Statement 	{
 			;
 
 Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
-			| ID ASS_OP Exp SEMICOLONE { $$=mkAssignmentStatementWithoutVal($1, $3) }
-			| ID OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE{
-				$$=mkAssignmentStatement($1, $6, $3);
-			}
+			| ScalarID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mkleaf(WHILE,0));}
 			;
 			
-Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp LES_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp GRT_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp GE_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp LE_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp EQ_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp NE_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term				{ $$=$1;}
-	;
+Exp			: ScalarExp
+			
+ScalarExp	: ScalarExp ADD_OP ScalarTerm	{ $$=mktree(ScalarAdd, 0, $3, $1);}
+			| ScalarExp SUB_OP ScalarTerm	{ $$=mktree(ScalarSub, 0, $3, $1);}
+			| ScalarExp LES_OP ScalarTerm	{ $$=mktree(ScalarLes, 0, $3, $1);}
+			| ScalarExp GRT_OP ScalarTerm	{ $$=mktree(ScalarGrt, 0, $3, $1);}
+			| ScalarExp GE_OP ScalarTerm	{ $$=mktree(ScalarGE, 0, $3, $1);}
+			| ScalarExp LE_OP ScalarTerm	{ $$=mktree(ScalarLE, 0, $3, $1);}
+			| ScalarExp EQ_OP ScalarTerm	{ $$=mktree(ScalarEq, 0, $3, $1);}
+			| ScalarExp NE_OP ScalarTerm	{ $$=mktree(ScalarNE, 0, $3, $1);}
+			| ScalarExp AND_OP ScalarTerm	{ $$=mktree(ScalarAnd, 0, $3, $1);}
+			| ScalarExp OR_OP ScalarTerm	{ $$=mktree(ScalarOr, 0, $3, $1);}
+			| ScalarTerm					{ $$=$1;}
+			;
 	
-Term: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term DIV_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term MOD_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term POW_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term ELE_MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term ELE_DIV_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term ELE_POW_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
-	| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
-	| NOT_OP Term		{ $$=mktree($1, 0, 0, $2);}
-	| Vector			
-	| ID				{ $$=mkleaf(ID, $1);}
-	| OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET	{ $$=$2;}
-	;
-	
-Vector	:	NUMBER  { $$=mkleaf(Vector, (int)mkIntList()); insertIntList((struct _intList*)($$->val), $1); }
-		|	OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET { $$=mkleaf(Vector, (int)$2);}
-		;
+ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm ELE_MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm ELE_DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm ELE_POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| INC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
+			| DEC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
+			| NOT_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
+			| ScalarID			{ $$=mkleaf(ScalarID, $1);}
+			| NUMBER			{ $$=mkleaf(ScalarData,$1);}
+			;
 %%
 
 int yyerror() { puts("syntax error!"); }
@@ -136,14 +132,8 @@ int main() {
 	return 0;
 }
 
-struct _statementList *mkAssignmentStatementWithoutVal(int id, struct _node *exp){
-	struct _intList *list=mkIntList(); 
-	insertIntList(list, 0);
-	return mkAssignmentStatement(id, exp, list);
-}
-
-struct _statementList *mkAssignmentStatement(int id, struct _node *exp, struct _intList *val){
-	return mkStatementListWithVal(mktree(ASS_OP, id, exp, mkleaf(NumberList, (int)val)));
+struct _statementList *mkScalarAssignmentStatement(int id, struct _node *exp){
+	return mkStatementListWithVal(mktree(ScalarAssign, id, 0, exp));
 }
 
 
@@ -209,6 +199,15 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "prnt");break;
 	case WHILE:
 		strcpy(buff, "while");break;
+	case ScalarID:
+		strcpy(buff, "scalarID");break;
+	case ScalarData:
+		strcpy(buff, "scalarData");break;
+	case ScalarAdd:
+		strcpy(buff, "scalarAdd");break;
+	case ScalarAssign:
+		strcpy(buff, "scalarAssign");break;
+		
 	default:
 		strcpy(buff, "");break;
 	}

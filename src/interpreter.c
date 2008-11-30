@@ -7,13 +7,16 @@
 #include "interpreter.h"
 //#define DEBUG_INTERPRETER
 
-struct _vector *traversalNode(struct _node *);
+void *traversalNode(struct _node *);
 
 /*
-int [3,2] a;a[1,1]=2;print(a); -ok
-int [2,2] a;print(a); -ok
+int a;a=2+2;print(a);-ok
+int a;int[2]b;int[2,2]c;print(a);print(b);print(c);-ok
+int a;a=2;print(a);-ok
+int a,b,c; a=2; b=3; c=a+b; print(c);-ok
+
+int [3,2] a;a[1,1]=2;print(a); -no
 int a; a=[2,2]; print(a); -no
-int a,b,c; a=2; b=3; c=a+b; print(c); -no
 */
 void interpret(struct _statementList *list){
 	int i;
@@ -34,84 +37,38 @@ void interpretTypeInfo(struct _node *n){
 		work=work->bro;
 	}
 }
-struct _vector *traversalNode(struct _node *n){
-	struct _vector *a, *b, *rz;
+void *traversalNode(struct _node *n){
+	int a,b;
+	void *rz;
 	int tmp;
-	struct _vector *v;
-	#ifdef DEBUG_INTERPRETER
 	char buf[256];
+	#ifdef DEBUG_INTERPRETER
 	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
 	#endif
 	switch(n->tag){
 	case TypeInfo:
 		interpretTypeInfo(n);
 		break;
-	case ASS_OP:
-		tmp=n->val;//symbol index
-		b=traversalNode(n->son->bro);//saved value
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode Assign value %d to %d\n", b, tmp);
-		#endif
-		setValueSymbol(tmp, b, (struct _intList*)n->son->val);
+	case ScalarAssign:
+		a=(int)traversalNode(n->son);
+		setScalarDataSymbol(n->val, a);
 		break;
-	case ADD_OP:
-		a=traversalNode(n->son);
-		b=traversalNode(n->son->bro);
-		rz=mkVector(a->type);
-		addVector(rz, a, b);
+	case ScalarAdd:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		rz=(void *)(a+b);
 		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode ADD_OP(%d=%d+%d)\n", rz, a, b);
+		printf("%d=%d+%d\n",rz,a,b);
 		#endif
 		break;
-	case SUB_OP:
-		a=traversalNode(n->son);
-		b=traversalNode(n->son->bro);
-		rz=mkVector(a->type);
-		subVector(rz, a, b);
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode SUB_OP(%d=%d+%d)\n", rz, a, b);
-		#endif
-		break;
-	case MUL_OP:
-		a=traversalNode(n->son);
-		b=traversalNode(n->son->bro);
-		multiplyVector(rz, a, b);
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode MUL_OP(%d=%d*%d)\n", rz, a, b);
-		#endif
-		break;
-	case DIV_OP:
-		a=traversalNode(n->son);
-		b=traversalNode(n->son->bro);
-		divideVector(rz, a, b);
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode DIV_OP(%d=%d*%d)\n", rz, a, b);
-		#endif
-		break;
-	case ID:
-		rz=getValueSymbol(n->val);
+	case ScalarID:
+		rz=(void *)getScalarSymbol(n->val);
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode getValFromSymbol(%d:%d)\n",n->val, rz);
 		#endif
 		break;
-	case NUMBER:
-		/*v=mkVector(integer);
-		tmp=0;
-		printf("NUBMER\n");
-		setElementVector(v, n->val, 1, &tmp);
-		rz=v;
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode NUMBER(%d)\n",n->val);
-		#endif*/
-		break;
-	case Vector:
-		/*v=mkVector(integer);
-		tmp=0;
-		setElementVector(v, n->val, 1, &tmp);
-		rz=v;
-		#ifdef DEBUG_INTERPRETER
-		printf("traversalNode Vector(%d)\n",n->val);
-		#endif*/
+	case ScalarData:
+		rz=(void *)n->val;
 		break;
 	case PRINT:
 		#ifdef DEBUG_INTERPRETER

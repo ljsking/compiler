@@ -4,6 +4,7 @@
 #include "mesch/matrix.h"
 #include "type.h"
 #include "symbol.h"
+#include "simple.tab.h"
 //#define DEBUG_SYMBOL
 struct _symbol **symbolTable;
 int nextSymbol = 0;
@@ -38,7 +39,7 @@ int insertSymbolTable(char *id)
 	symbolTable[nextSymbol]=(struct _symbol *)malloc(sizeof(struct _symbol));
 	symbolTable[nextSymbol]->id = buf;
 	symbolTable[nextSymbol]->type = 0;
-	symbolTable[nextSymbol]->vector = 0;
+	symbolTable[nextSymbol]->data = 0;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol is malloc in %d\n", nextSymbol, symbolTable[nextSymbol]);
 	#endif
@@ -61,7 +62,6 @@ void printSymbol(Symbol *s){
 void initializeSymbol(int index, struct _type *type){
 	struct _symbol *symbol = symbolTable[index];
 	setTypeSymbol(index, type);
-	symbol->vector = mkVector(symbol->type);
 	switch(type->type){
 		case ScalarType:
 			symbol->data=0;
@@ -87,25 +87,24 @@ void setTypeSymbol(int index, struct _type *type){
 	printf("\n");
 	#endif
 }
-int setValueSymbol(int index, struct _vector *val, struct _intList* list){
+int setValueSymbol(int index, struct _vector *val, struct _node* node){
 	struct _symbol *dst = symbolTable[index];
-	if(dst->type==0) return -1;
-	
-	#ifdef DEBUG_SYMBOL
-	printf("SYM: %d symbol set value %d\n", index, symbolTable[index]->vector);
-	printIntList(list);
-	printSymbol(symbolTable[index]);
-	printf("\n");
-	#endif
+	char buf[256];
+	printf("tag is %s\n", convertTag(node->tag, buf));
 	return 0;
 }
-struct _vector *getValueSymbol(int index){
+void setScalarDataSymbol(int index, int data){
+	Symbol *dst = symbolTable[index];
+	dst->data = (void *)data;
+}
+int getScalarSymbol(int index){
+	Symbol *dst = symbolTable[index];
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol get value %d\n", index, symbolTable[index]->vector);
 	printSymbol(symbolTable[index]);
 	printf("\n");
 	#endif
-	return symbolTable[index]->vector;
+	return (int)dst->data;
 }
 struct _type *getTypeSymbol(int index){
 	#ifdef DEBUG_SYMBOL

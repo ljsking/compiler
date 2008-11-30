@@ -104,23 +104,23 @@ Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 			
 Exp			: ScalarExp
 			
-ScalarExp	: ScalarExp ADD_OP ScalarTerm	{ $$=mktree(ScalarAdd, 0, $3, $1);}
-			| ScalarExp SUB_OP ScalarTerm	{ $$=mktree(ScalarSub, 0, $3, $1);}
-			| ScalarExp LES_OP ScalarTerm	{ $$=mktree(ScalarLes, 0, $3, $1);}
-			| ScalarExp GRT_OP ScalarTerm	{ $$=mktree(ScalarGrt, 0, $3, $1);}
-			| ScalarExp GE_OP ScalarTerm	{ $$=mktree(ScalarGE, 0, $3, $1);}
-			| ScalarExp LE_OP ScalarTerm	{ $$=mktree(ScalarLE, 0, $3, $1);}
-			| ScalarExp EQ_OP ScalarTerm	{ $$=mktree(ScalarEq, 0, $3, $1);}
-			| ScalarExp NE_OP ScalarTerm	{ $$=mktree(ScalarNE, 0, $3, $1);}
-			| ScalarExp AND_OP ScalarTerm	{ $$=mktree(ScalarAnd, 0, $3, $1);}
-			| ScalarExp OR_OP ScalarTerm	{ $$=mktree(ScalarOr, 0, $3, $1);}
+ScalarExp	: ScalarExp ADD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp SUB_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp LES_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp GRT_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp GE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp LE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp EQ_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp NE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp AND_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarExp OR_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm					{ $$=$1;}
 			;
 	
-ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree(ScalarMul, 0, $3, $1);}
-			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree(ScalarDiv, 0, $3, $1);}
-			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree(ScalarMod, 0, $3, $1);}
-			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree(ScalarPow, 0, $3, $1);}
+ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
+			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm ELE_MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm ELE_DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 			| ScalarTerm ELE_POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
@@ -218,18 +218,6 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "scalarID");break;
 	case ScalarData:
 		strcpy(buff, "scalarData");break;
-	case ScalarAdd:
-		strcpy(buff, "scalarAdd");break;
-	case ScalarSub:
-		strcpy(buff, "scalarSub");break;
-	case ScalarMul:
-		strcpy(buff, "scalarMul");break;
-	case ScalarDiv:
-		strcpy(buff, "scalarDiv");break;
-	case ScalarMod:
-		strcpy(buff, "scalarMod");break;
-	case ScalarPow:
-		strcpy(buff, "scalarPow");break;
 	case ScalarAssign:
 		strcpy(buff, "scalarAssign");break;
 	case VectorAssign:

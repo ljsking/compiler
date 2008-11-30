@@ -23,7 +23,7 @@ int a, b; a=2; b=4; a = a%b; print(a);	-ok
 int [3] v;v[0]=1;v[1]=2;print(v); -ok
 int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c); -ok
 
-int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a); 
+int a,i;i=0;a=0;while(a<4){a=a+i;i=i+1;}print(a);#
 
 int a; a=[2,2]; print(a); -no
 */
@@ -62,10 +62,10 @@ Symbol *traversalNode(struct _node *n){
 		interpretTypeInfo(n);
 		break;
 	case ScalarAssign:
-		pa=traversalNode(n->son);
-		rz=getSymbol(n->val);
-		rz->type=pa->type;
-		rz->data=pa->data;
+		pa=traversalNode(n->son);//result
+		rz=getSymbol(n->val);//symbol
+		rz->type=pa->type;//type
+		rz->data=pa->data;//data
 		break;
 	case VectorAssign:
 		pa=traversalNode(n->son);//val
@@ -281,15 +281,17 @@ Symbol *traversalNode(struct _node *n){
 		break;
 	case WHILE:
 		n=n->son;//exp
-		//printf("while's son:%d\n", n->son);
 		list = (StatementList *)n->bro;//statements
-		//printf("while e:%d, list(%d):%d\n", n, list, list->numberElement);
-		/*dataA = traversalNode(n);
-		if(((Symbol*)dataA)->type->type!=ScalarType){
+		pa = traversalNode(n);
+		if(pa->type->type!=ScalarType){
 			printf("while's exp is not scalar\n");
 			exit(-1);
-		}*/
-		interpret(list);
+		}
+		while(idata_a){
+			interpret(list);
+			pa = traversalNode(n);
+			idata_a = (int)(pa->data);
+		}
 		break;
 	case PRINT:
 		#ifdef DEBUG_INTERPRETER

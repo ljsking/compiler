@@ -49,7 +49,7 @@ Symbol *traversalNode(struct _node *n){
 	Symbol *pa, *pb;
 	void *dataA, *dataB, *dataRz;
 	Symbol *rz;
-	int tmp, tmp_data;
+	int tmp, tmp_data, idata_a, idata_b;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
 	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
@@ -207,6 +207,56 @@ Symbol *traversalNode(struct _node *n){
 					tmp_data *= tmp;
 				dataA = (void*)(tmp_data);
 				dataRz=(void*)((int)dataA);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:				
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d^%d\n",rz,a,b);
+		#endif
+		break;
+	case GRT_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a > idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:				
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d^%d\n",rz,a,b);
+		#endif
+		break;
+	case LES_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a < idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
 			case VectorType:				

@@ -47,7 +47,6 @@ void *traversalNode(struct _node *n){
 	int  a, b, i;
 	void *pa, *pb;
 	void *rz;
-	int a,b;
 	int tmp;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
@@ -120,6 +119,8 @@ void *traversalNode(struct _node *n){
 		rz=(void *)(a);
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d^%d\n",rz,a,b);
+		#endif
+		break;
 	case VectorAdd:
 		pa=traversalNode(n->son);//VEC *
 		pb=traversalNode(n->son->bro);

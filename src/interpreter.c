@@ -6,7 +6,7 @@
 #include "symbol.h"
 #include "mesch/matrix.h"
 #include "interpreter.h"
-#define DEBUG_INTERPRETER
+//#define DEBUG_INTERPRETER
 
 Symbol *traversalNode(struct _node *);
 
@@ -78,7 +78,7 @@ Symbol *traversalNode(struct _node *n){
 		tmp=(int)n->son->bro->val;//col
 		setMatrixDataSymbol(n->val, (int)pa->data, b, tmp);
 		break;
-	case ScalarAdd:
+	case ADD_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -105,7 +105,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d+%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarSub:
+	case SUB_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -132,7 +132,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d-%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarMul:
+	case MUL_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -151,13 +151,14 @@ Symbol *traversalNode(struct _node *n){
 				rz=mkSymbol(pa->type, dataRz);
 			break;
 
+
 		}
 		
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d*%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarDiv:
+	case DIV_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -177,7 +178,7 @@ Symbol *traversalNode(struct _node *n){
 		#endif
 		break;
 
-	case ScalarMod:
+	case MOD_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -196,7 +197,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d%%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarPow:
+	case POW_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -215,6 +216,7 @@ Symbol *traversalNode(struct _node *n){
 			case VectorType:				
 			break;
 		}
+		
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d^%d\n",rz,a,b);
 		#endif
@@ -230,9 +232,9 @@ Symbol *traversalNode(struct _node *n){
 		break;
 	case WHILE:
 		n=n->son;//exp
-		printf("while's son:%d\n", n->son);
+		//printf("while's son:%d\n", n->son);
 		list = (StatementList *)n->bro;//statements
-		printf("while e:%d, list(%d):%d\n", n, list, list->numberElement);
+		//printf("while e:%d, list(%d):%d\n", n, list, list->numberElement);
 		/*dataA = traversalNode(n);
 		if(((Symbol*)dataA)->type->type!=ScalarType){
 			printf("while's exp is not scalar\n");

@@ -75,7 +75,7 @@ Symbol *traversalNode(struct _node *n){
 		tmp=(int)n->son->bro->val;//col
 		setMatrixDataSymbol(n->val, (int)pa->data, b, tmp);
 		break;
-	case ScalarAdd:
+	case ADD_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -102,7 +102,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d+%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarSub:
+	case SUB_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -129,7 +129,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d-%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarMul:
+	case MUL_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -154,7 +154,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d*%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarDiv:
+	case DIV_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -174,7 +174,7 @@ Symbol *traversalNode(struct _node *n){
 		#endif
 		break;
 
-	case ScalarMod:
+	case MOD_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		
@@ -193,7 +193,7 @@ Symbol *traversalNode(struct _node *n){
 		printf("%d=%d%%d\n",rz,a,b);
 		#endif
 		break;
-	case ScalarPow:
+	case POW_OP:
 		pa=traversalNode(n->son);
 		pb=traversalNode(n->son->bro);
 		

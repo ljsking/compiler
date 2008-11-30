@@ -1,11 +1,11 @@
 #ifndef STATEMENTLIST_H
 #define STATEMENTLIST_H
 #include "node.h"
-struct _statementList{
+typedef struct _statementList{
 	int				numberElement;
 	int				maxElement;
 	struct _node	**elements;
-};
+}StatementList;
 struct _statementList *mkStatementList();
 struct _statementList *mkStatementListWithVal(struct _node *);
 void				  freeStatementList(struct _statementList *);

@@ -6,7 +6,7 @@
 #include "symbol.h"
 #include "mesch/matrix.h"
 #include "interpreter.h"
-//#define DEBUG_INTERPRETER
+#define DEBUG_INTERPRETER
 
 Symbol *traversalNode(struct _node *);
 
@@ -22,6 +22,8 @@ int a, b; a=2; b=4; a = a/b; print(a);	-ok
 int a, b; a=2; b=4; a = a%b; print(a);	-ok
 int [3] v;v[0]=1;v[1]=2;print(v); -ok
 int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c); -ok
+
+int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a); 
 
 int a; a=[2,2]; print(a); -no
 */
@@ -50,6 +52,7 @@ Symbol *traversalNode(struct _node *n){
 	void *dataA, *dataB, *dataRz;
 	Symbol *rz;
 	int tmp, tmp_data;
+	StatementList *list;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
 	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
@@ -225,6 +228,13 @@ Symbol *traversalNode(struct _node *n){
 		break;
 	case ScalarData:
 		rz=(Symbol*)mkSymbol((Type *)IntegerScalarType,(void *)n->val);
+		break;
+	case WHILE:
+		n=n->son;//exp
+		printf("while's son:%d\n", n->son);
+		list = (StatementList *)n->bro;//statements
+		printf("while e:%d, list(%d):%d\n", n, list, list->numberElement);
+		interpret(list);
 		break;
 	case PRINT:
 		#ifdef DEBUG_INTERPRETER

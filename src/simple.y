@@ -99,7 +99,7 @@ Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 			| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
 			| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
-			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE,0, $3, 0));}
+			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
 			;
 			
 Exp			: ScalarExp

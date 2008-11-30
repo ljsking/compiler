@@ -4,8 +4,8 @@
 	int insertSymbolTable(char *);
 %}
 %%
-[0-9]+	{yylval.intVal = atoi(yytext); return (NUMBER);}
-\-[0-9]+	{yylval.intVal = atoi(yytext); return (INTEGER);}
+[0-9]+	{yylval.intVal = atoi(yytext); return (POSITIVE_NUMBER);}
+\-[0-9]+	{yylval.intVal = atoi(yytext); return (NEGATIVE_NUMBER);}
 "int"	{yylval.intVal = INT; return(INT); }
 "bool"  {yylval.intVal = BOOL; return(BOOL); }
 "print" {return (PRINT);}

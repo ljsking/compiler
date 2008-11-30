@@ -20,6 +20,12 @@ int [3] v;v[0]=1;print(v); -ok
 
 int [3,2] a;a[1,1]=2;print(a); -no
 int a; a=[2,2]; print(a); -no
+
+
+int a, b; a=2; b=4; a = a-b; print(a);	-ok
+int a, b; a=2; b=4; a = a*b; print(a);	-ok
+int a, b; a=2; b=4; a = a/b; print(a);	-ok
+int a, b; a=2; b=4; a = a%b; print(a);	-ok
 */
 void interpret(struct _statementList *list){
 	int i;
@@ -41,7 +47,7 @@ void interpretTypeInfo(struct _node *n){
 	}
 }
 void *traversalNode(struct _node *n){
-	int a,b;
+	int a,b, i;
 	void *rz;
 	int tmp;
 	char buf[256];
@@ -67,6 +73,48 @@ void *traversalNode(struct _node *n){
 		rz=(void *)(a+b);
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d+%d\n",rz,a,b);
+		#endif
+		break;
+	case ScalarSub:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		rz=(void *)(a-b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d-%d\n",rz,a,b);
+		#endif
+		break;
+	case MUL_OP:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		rz=(void *)(a*b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d*%d\n",rz,a,b);
+		#endif
+		break;
+	case DIV_OP:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		rz=(void *)(a/b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d/%d\n",rz,a,b);
+		#endif
+		break;
+	case MOD_OP:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		rz=(void *)(a/b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d/%d\n",rz,a,b);
+		#endif
+		break;
+	case POW_OP:
+		a=(int)traversalNode(n->son);
+		b=(int)traversalNode(n->son->bro);
+		for (i = 0; i < b; i++)
+			a *= a;
+		rz=(void *)(a);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d^%d\n",rz,a,b);
 		#endif
 		break;
 	case ScalarID:

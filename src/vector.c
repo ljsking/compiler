@@ -30,24 +30,27 @@ int addVector(struct _vector *dst, struct _vector *a, struct _vector *b){
 }
 
 int subVector(struct _vector *dst, struct _vector *a, struct _vector *b){
-	int tmp1,tmp2;
+	int tmp1,tmp2, rz;
 	tmp1=getElementVector(a, 1, 0);
 	tmp2=getElementVector(b, 1, 0);
-	setIntList(dst->elements, tmp1-tmp2, 0);
+	rz=tmp1-tmp2;
+	setIntList(dst->elements, rz, 0);
 }
 
 int multiplyVector(struct _vector *dst, struct _vector *a, struct _vector *b){
-	int tmp1,tmp2;
+	int tmp1,tmp2, rz;
 	tmp1=getElementVector(a, 1, 0);
 	tmp2=getElementVector(b, 1, 0);
-	setIntList(dst->elements, tmp1-tmp2, 0);
+	rz=tmp1*tmp2;
+	setIntList(dst->elements, rz, 0);
 }
 
 int divideVector(struct _vector *dst, struct _vector *a, struct _vector *b){
-	int tmp1,tmp2;
+	int tmp1,tmp2, rz;
 	tmp1=getElementVector(a, 1, 0);
 	tmp2=getElementVector(b, 1, 0);
-	setIntList(dst->elements, tmp1/tmp2, 0);
+	rz=tmp1/tmp2;
+	setIntList(dst->elements, rz, 0);
 }
 
 static int insertElementVector(struct _vector *v, int val){

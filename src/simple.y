@@ -61,6 +61,7 @@ DeclareStatements : DeclareStatements DeclareStatement {
 DeclareStatement : Type IDList SEMICOLONE { 
 						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
 					}
+					;
 
 Type : INT {$$=mkScalarType(0);}
 	 | BOOL{$$=mkScalarType(1);}
@@ -89,7 +90,7 @@ Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 			| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
 			| ID OPEN_SQUARE_BRACKET NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
-			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mkleaf(WHILE,0));}
+			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE,0, $3, 0));}
 			;
 			
 Exp			: ScalarExp

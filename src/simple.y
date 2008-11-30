@@ -27,7 +27,6 @@
 %type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement
 %type  <nodeVal> IDList Exp ScalarTerm ScalarExp
 %type  <typeVal> Type
-%type  <intList> NumberList
 %type  <intVal>  Number
 
 %token <intVal> ID INT BOOL POSITIVE_NUMBER NEGATIVE_NUMBER
@@ -77,10 +76,6 @@ Type : INT {$$=mkScalarType(0);}
 	 | INT OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(0, $3, $5);}
 	 | BOOL OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(1, $3, $5);}
 	 ;
-	
-NumberList   : Number{ $$=mkIntList(); insertIntList($$, $1); }
-		   	 | NumberList COMMA Number { insertIntList($1, $3); $$=$1; }
-		   	 ;
 	
 IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}

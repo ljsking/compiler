@@ -215,7 +215,6 @@ Symbol *traversalNode(struct _node *n){
 			case VectorType:				
 			break;
 		}
-		
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d^%d\n",rz,a,b);
 		#endif
@@ -234,6 +233,11 @@ Symbol *traversalNode(struct _node *n){
 		printf("while's son:%d\n", n->son);
 		list = (StatementList *)n->bro;//statements
 		printf("while e:%d, list(%d):%d\n", n, list, list->numberElement);
+		/*dataA = traversalNode(n);
+		if(((Symbol*)dataA)->type->type!=ScalarType){
+			printf("while's exp is not scalar\n");
+			exit(-1);
+		}*/
 		interpret(list);
 		break;
 	case PRINT:

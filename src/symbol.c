@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "mesch/matrix.h"
+#include "type.h"
 #include "symbol.h"
-#define DEBUG_SYMBOL
+//#define DEBUG_SYMBOL
 struct _symbol **symbolTable;
 int nextSymbol = 0;
 int isDuplicated(char *id)
@@ -43,20 +45,42 @@ int insertSymbolTable(char *id)
 	nextSymbol++;
 	return nextSymbol-1;
 }
+void printSymbol(Symbol *s){
+	switch(s->type->type){
+		case ScalarType:
+			printf("Scalar %d\n",s->data);
+		break;
+		case VectorType:
+			v_output(s->data);
+		break;
+		case MatrixType:
+			m_output(s->data);
+		break;
+	}
+}
 void initializeSymbol(int index, struct _type *type){
-	int numberOfElements;
-	int i;
 	struct _symbol *symbol = symbolTable[index];
 	setTypeSymbol(index, type);
 	symbol->vector = mkVector(symbol->type);
+	switch(type->type){
+		case ScalarType:
+			symbol->data=0;
+		break;
+		case VectorType:
+			symbol->data=v_get(type->col);
+		break;
+		case MatrixType:
+			symbol->data=m_get(type->row,type->col);
+		break;
+	}
 	#ifdef DEBUG_SYMBOL
-	printf("SYM: %d symbol initialize type %d\n", index, symbolTable[index]->type);
-	printSymbol(symbolTable[index]);
-	printf("\n");
+	printf("before printSymbol\n");
+	printSymbol(symbol);
 	#endif
 }
 void setTypeSymbol(int index, struct _type *type){
-	symbolTable[index]->type = type;
+	Symbol *symbol = symbolTable[index];
+	symbol->type = type;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol set type %d\n", index, symbolTable[index]->type);
 	printSymbol(symbolTable[index]);
@@ -90,13 +114,6 @@ struct _type *getTypeSymbol(int index){
 	printf("\n");
 	#endif
 	return symbolTable[index]->type;
-}
-void printSymbol(struct _symbol *s){
-	printf("symbol %s t:%d v:%d", s->id, s->type, s->vector);
-	if(s->type)
-		printType(s->type);
-	if(s->vector)
-		printVector(s->vector);
 }
 void printSymbolByIndex(int index){
 	printSymbol(symbolTable[index]);

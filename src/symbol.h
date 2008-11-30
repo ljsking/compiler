@@ -2,11 +2,12 @@
 #define SYMBOL_H
 #define MAX_SYMBOL_SIZE 100
 #include "vector.h"
-struct _symbol {
+typedef struct _symbol {
 	char *id;
 	struct _type *type;
 	struct _vector *vector;
-};
+	void *data;
+}Symbol;
 extern struct _symbol **symbolTable;
 extern int nextSymbol;
 int insertSymbolTable(char *);

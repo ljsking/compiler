@@ -10,8 +10,10 @@
 struct _vector *traversalNode(struct _node *);
 
 /*
-int a; a=[1,2,3]; print(a);
-int a,b,c; a=2; b=3; c=a+b; print(c);
+int [3,2] a;a[1,1]=2;print(a); -ok
+int [2,2] a;print(a); -ok
+int a; a=[2,2]; print(a); -no
+int a,b,c; a=2; b=3; c=a+b; print(c); -no
 */
 void interpret(struct _statementList *list){
 	int i;
@@ -50,7 +52,7 @@ struct _vector *traversalNode(struct _node *n){
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode Assign value %d to %d\n", b, tmp);
 		#endif
-		setValueSymbol(tmp, b);
+		setValueSymbol(tmp, b, (struct _intList*)n->son->val);
 		break;
 	case ADD_OP:
 		a=traversalNode(n->son);
@@ -94,7 +96,9 @@ struct _vector *traversalNode(struct _node *n){
 		break;
 	case NUMBER:
 		v=mkVector(integer);
-		setElementVector(v, n->val, 1, 0);
+		tmp=0;
+		printf("NUBMER\n");
+		setElementVector(v, n->val, 1, &tmp);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);
@@ -102,7 +106,8 @@ struct _vector *traversalNode(struct _node *n){
 		break;
 	case Vector:
 		v=mkVector(integer);
-		setElementsVector(v, (struct _intList *)n->val);
+		tmp=0;
+		setElementVector(v, n->val, 1, &tmp);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode Vector(%d)\n",n->val);

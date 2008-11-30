@@ -50,7 +50,7 @@ int getOffsetType(struct _type *t, int count, int *array){
 		printf("size of dimensions is not same as count\n");
 		exit(-1);
 	}
-	for(i=0;i<count;i++){
+	for(i=count-1;i>=0;i--){
 		rz+=tmp*array[i];
 		tmp*=t->dimensions->elements[i];
 	}

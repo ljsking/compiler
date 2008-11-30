@@ -12,7 +12,7 @@ extern int nextSymbol;
 int insertSymbolTable(char *);
 void initializeSymbol(int, struct _type *);
 void setTypeSymbol(int, struct _type *);
-int setValueSymbol(int, struct _vector *);
+int setValueSymbol(int, struct _vector *, struct _intList*);
 struct _vector *getValueSymbol(int);
 struct _type *getTypeSymbol(int);
 void printSymbol(struct _symbol *);

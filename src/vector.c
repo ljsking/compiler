@@ -4,7 +4,7 @@
 
 #include "type.h"
 #include "vector.h"
-//#define DEBUG_VECTOR
+#define DEBUG_VECTOR
 static int insertElementVector(struct _vector *, int);
 struct _vector *mkVector(struct _type *t){
 	int numberOfElements, i;
@@ -21,10 +21,14 @@ struct _vector *mkVector(struct _type *t){
 }
 
 int addVector(struct _vector *dst, struct _vector *a, struct _vector *b){
-	int tmp1,tmp2;
+	int tmp1,tmp2,rz;
 	tmp1=getElementVector(a, 1, 0);
 	tmp2=getElementVector(b, 1, 0);
-	setIntList(dst->elements, tmp1+tmp2, 0);
+	rz=tmp1+tmp2;
+	#ifdef DEBUG_VECTOR
+	printf("addVector's rz: %d\n", rz);
+	#endif
+	setIntList(dst->elements, rz, 0);
 }
 
 int subVector(struct _vector *dst, struct _vector *a, struct _vector *b){
@@ -75,7 +79,7 @@ int getElementVector(struct _vector *v, int argc, ...){
 	va_list ap;
 	
 	#ifdef DEBUG_VECTOR
-	printf("VECTOR: getElement argument count: %d in %d\n", index, v);
+	printf("VECTOR: getElement argument count: %d in %d\n", argc, v);
 	#endif
 	
 	if(v->type->dimensions->numberElement!=argc)
@@ -99,7 +103,7 @@ void setElementVector(struct _vector *v, int value, int argc, int *array){
 	int offset;
 	
 	#ifdef DEBUG_VECTOR
-	printf("VECTOR: getElement argument count: %d in %d\n", index, v);
+	printf("VECTOR: setElement argument count: %d in %d\n", argc, v);
 	#endif
 	
 	if(v->type->dimensions->numberElement!=argc)
@@ -109,6 +113,7 @@ void setElementVector(struct _vector *v, int value, int argc, int *array){
 	}
 	printf("setElementVector \n");
 	offset = getOffsetType(v->type, argc, array);
+	printf("offset %d \n", offset);
 	setIntList(v->elements, value, offset);
 }
 

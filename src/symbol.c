@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symbol.h"
-//#define DEBUG_SYMBOL
+#define DEBUG_SYMBOL
 struct _symbol **symbolTable;
 int nextSymbol = 0;
 int isDuplicated(char *id)
@@ -63,11 +63,13 @@ void setTypeSymbol(int index, struct _type *type){
 	printf("\n");
 	#endif
 }
-int setValueSymbol(int index, struct _vector *val){
-	if(symbolTable[index]->type==0) return -1;
-	symbolTable[index]->vector = val;
+int setValueSymbol(int index, struct _vector *val, struct _intList* list){
+	struct _symbol *dst = symbolTable[index];
+	if(dst->type==0) return -1;
+	setIntList(dst->vector->elements, getIntList(val->elements, 0), getOffsetType(dst->type, list->numberElement, list->elements));
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol set value %d\n", index, symbolTable[index]->vector);
+	printIntList(list);
 	printSymbol(symbolTable[index]);
 	printf("\n");
 	#endif

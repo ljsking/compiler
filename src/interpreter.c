@@ -49,7 +49,7 @@ Symbol *traversalNode(struct _node *n){
 	Symbol *pa, *pb;
 	void *dataA, *dataB, *dataRz;
 	Symbol *rz;
-	int tmp;
+	int tmp, tmp_data;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
 	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
@@ -91,6 +91,11 @@ Symbol *traversalNode(struct _node *n){
 				v_add((VEC *)dataA,(VEC *)dataB,(VEC *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
 			break;
+			case MatrixType:
+				dataRz = m_copy(dataA, MNULL);
+				m_add((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
+				rz=mkSymbol(pa->type, dataRz);
+			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
@@ -113,6 +118,11 @@ Symbol *traversalNode(struct _node *n){
 				v_sub((VEC *)dataA,(VEC *)dataB,(VEC *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
 			break;
+			case MatrixType:
+				dataRz = m_copy(dataA, MNULL);
+				m_sub((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
+				rz=mkSymbol(pa->type, dataRz);
+			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
@@ -130,40 +140,79 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA*(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:
-				dataRz = v_copy(dataA,VNULL);
-				mv_mlt((VEC *)dataA,(VEC *)dataB,(VEC *)dataRz);
+			case VectorType:				
+			break;
+			case MatrixType:
+				dataRz = m_copy(dataA, MNULL);
+				m_mlt((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
+			break;
+
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d*%d\n",rz,a,b);
+		#endif
+		break;
+	case ScalarDiv:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA*(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:				
 			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d+%d\n",rz,a,b);
-		#endif
-		break;
-	case ScalarDiv:
-		a=(int)traversalNode(n->son);
-		b=(int)traversalNode(n->son->bro);
-		rz=(void *)(a/b);
-		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d/%d\n",rz,a,b);
 		#endif
 		break;
+
 	case ScalarMod:
-		a=(int)traversalNode(n->son);
-		b=(int)traversalNode(n->son->bro);
-		rz=(void *)(a%b);
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA%(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:				
+			break;
+		}
+		
 		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d/%d\n",rz,a,b);
+		printf("%d=%d%%d\n",rz,a,b);
 		#endif
 		break;
 	case ScalarPow:
-		a=(int)traversalNode(n->son);
-		b=(int)traversalNode(n->son->bro);
-		tmp = a;
-		for (i = 0; i < b; i++)
-			a *= tmp;
-		rz=(void *)(a);
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		tmp = (int)dataA;
+		tmp_data = (int)dataA;
+		switch(pa->type->type){
+			case ScalarType:
+				for (i = 1; i < (int)dataB; i++)
+					tmp_data *= tmp;
+				dataA = (void*)(tmp_data);
+				dataRz=(void*)((int)dataA);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:				
+			break;
+		}
+		
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d^%d\n",rz,a,b);
 		#endif

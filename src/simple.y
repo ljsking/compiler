@@ -50,6 +50,7 @@ Program		: DeclareStatements Statements{
 					}
 			| Statements{root=$$;}
 			| DeclareStatements{root=$$;}
+			;
 
 DeclareStatements : DeclareStatements DeclareStatement { 
 						mergeStatementList($1,$2); 
@@ -57,6 +58,7 @@ DeclareStatements : DeclareStatements DeclareStatement {
 						$$=$1;
 					}
 				  | DeclareStatement
+				  ;
 	
 
 DeclareStatement : Type IDList SEMICOLONE { 
@@ -74,6 +76,7 @@ Type : INT {$$=mkScalarType(0);}
 	
 NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1); }
 		   	 | NumberList COMMA NUMBER { insertIntList($1, $3); $$=$1; }
+		   	 ;
 	
 IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
@@ -227,6 +230,10 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "scalarPow");break;
 	case ScalarAssign:
 		strcpy(buff, "scalarAssign");break;
+	case VectorAssign:
+		strcpy(buff, "vectorAssign");break;
+	case MatrixAssign:
+		strcpy(buff, "matrixAssign");break;
 		
 	default:
 		strcpy(buff, "");break;

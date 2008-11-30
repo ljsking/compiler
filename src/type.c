@@ -2,6 +2,12 @@
 #include <string.h>
 #include <stdio.h>
 #include "type.h"
+Type *IntegerScalarType;
+Type *BooleanScalarType;
+void initType(){
+	IntegerScalarType=mkScalarType(0);
+	BooleanScalarType=mkScalarType(1);
+}
 struct _type *mkScalarType(int boolean){
 	struct _type * type = malloc(sizeof(struct _type));
 	type->boolean = boolean;

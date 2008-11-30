@@ -21,6 +21,17 @@ int isDuplicated(char *id)
 	}
 	return -1;
 }
+Symbol *mkSymbol(Type *type, void *data){
+	Symbol *s=malloc(sizeof(Symbol));
+	symbolTable[nextSymbol] = s;
+	nextSymbol++;
+	initializeSymbol(nextSymbol-1, type);
+	s->data=data;
+	return s;
+}
+Symbol *getSymbol(int index){
+	return symbolTable[index];
+}
 int insertSymbolTable(char *id)
 {
 	int i;

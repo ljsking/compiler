@@ -8,12 +8,11 @@
 #include "interpreter.h"
 //#define DEBUG_INTERPRETER
 
-void *traversalNode(struct _node *);
+Symbol *traversalNode(struct _node *);
 
 /*
 int a;a=2+2;print(a);-ok
 int a;int[2]b;int[2,2]c;print(a);print(b);print(c);-ok
-int a;a=2;print(a);-ok
 int a,b,c; a=2; b=3; c=a+b; print(c);-ok
 int [3] v;v[0]=1;print(v); -ok
 int [3,2] a;a[1,1]=2;print(a); -ok
@@ -21,6 +20,8 @@ int a, b; a=2; b=4; a = a-b; print(a);	-ok
 int a, b; a=2; b=4; a = a*b; print(a);	-ok
 int a, b; a=2; b=4; a = a/b; print(a);	-ok
 int a, b; a=2; b=4; a = a%b; print(a);	-ok
+int [3] v;v[0]=1;v[1]=2;print(v); -ok
+int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c); -ok
 
 int a; a=[2,2]; print(a); -no
 */
@@ -43,10 +44,11 @@ void interpretTypeInfo(struct _node *n){
 		work=work->bro;
 	}
 }
-void *traversalNode(struct _node *n){
+Symbol *traversalNode(struct _node *n){
 	int  a, b, i;
-	void *pa, *pb;
-	void *rz;
+	Symbol *pa, *pb;
+	void *dataA, *dataB, *dataRz;
+	Symbol *rz;
 	int tmp;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
@@ -57,24 +59,40 @@ void *traversalNode(struct _node *n){
 		interpretTypeInfo(n);
 		break;
 	case ScalarAssign:
-		a=(int)traversalNode(n->son);
-		setScalarDataSymbol(n->val, a);
+		pa=traversalNode(n->son);
+		rz=getSymbol(n->val);
+		rz->type=pa->type;
+		rz->data=pa->data;
 		break;
 	case VectorAssign:
-		a=(int)traversalNode(n->son);//val
-		b=(int)n->bro;//col
-		setVectorDataSymbol(n->val, a, b);
+		pa=traversalNode(n->son);//val
+		b=(int)n->son->bro;//col
+		setVectorDataSymbol(n->val, (int)(pa->data), b);
 		break;
 	case MatrixAssign:
-		a=(int)traversalNode(n->son);//val
+		pa=traversalNode(n->son);//val
 		b=(int)n->son->bro->tag;//row
 		tmp=(int)n->son->bro->val;//col
-		setMatrixDataSymbol(n->val, a, b, tmp);
+		setMatrixDataSymbol(n->val, (int)pa->data, b, tmp);
 		break;
 	case ScalarAdd:
-		a=(int)traversalNode(n->son);
-		b=(int)traversalNode(n->son->bro);
-		rz=(void *)(a+b);
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA+(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:
+				dataRz = v_copy(dataA,VNULL);
+				v_add((VEC *)dataA,(VEC *)dataB,(VEC *)dataRz);
+				rz=mkSymbol(pa->type, dataRz);
+			break;
+		}
+		
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d+%d\n",rz,a,b);
 		#endif
@@ -121,30 +139,14 @@ void *traversalNode(struct _node *n){
 		printf("%d=%d^%d\n",rz,a,b);
 		#endif
 		break;
-	case VectorAdd:
-		pa=traversalNode(n->son);//VEC *
-		pb=traversalNode(n->son->bro);
-		v_add((VEC *)rz, (VEC *)a,(VEC *)b);
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d+%d\n",rz,a,b);
-		#endif
-		break;
-	case MatrixAdd:
-		pa=traversalNode(n->son);//VEC *
-		pb=traversalNode(n->son->bro);
-		m_add((MAT *)rz, (MAT *)a,(MAT *)b);
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d+%d\n",rz,a,b);
-		#endif
-		break;
 	case ScalarID:
-		rz=(void *)getScalarSymbol(n->val);
+		rz=getSymbol(n->val);
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode getValFromSymbol(%d:%d)\n",n->val, rz);
 		#endif
 		break;
 	case ScalarData:
-		rz=(void *)n->val;
+		rz=(Symbol*)mkSymbol((Type *)IntegerScalarType,(void *)n->val);
 		break;
 	case PRINT:
 		#ifdef DEBUG_INTERPRETER

@@ -128,6 +128,7 @@ ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
 int yyerror() { puts("syntax error!"); }
 
 int main() { 
+	initType();
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	yyparse();
 	interpret(root);

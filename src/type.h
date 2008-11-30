@@ -14,4 +14,6 @@ Type *mkScalarType(int);
 Type *mkVectorType(int, int);
 Type *mkMatrixType(int, int, int);
 void printType(Type *);
+extern Type *IntegerScalarType;
+extern Type *BooleanScalarType;
 #endif

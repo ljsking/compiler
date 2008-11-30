@@ -4,6 +4,7 @@
 #include "simple.h"
 #include "type.h"
 #include "symbol.h"
+#include "mesch/matrix.h"
 #include "interpreter.h"
 //#define DEBUG_INTERPRETER
 
@@ -15,17 +16,13 @@ int a;int[2]b;int[2,2]c;print(a);print(b);print(c);-ok
 int a;a=2;print(a);-ok
 int a,b,c; a=2; b=3; c=a+b; print(c);-ok
 int [3] v;v[0]=1;print(v); -ok
-
-int [3] v;v[0]=1;print(v); -ok
-
-int [3,2] a;a[1,1]=2;print(a); -no
-int a; a=[2,2]; print(a); -no
-
-
+int [3,2] a;a[1,1]=2;print(a); -ok
 int a, b; a=2; b=4; a = a-b; print(a);	-ok
 int a, b; a=2; b=4; a = a*b; print(a);	-ok
 int a, b; a=2; b=4; a = a/b; print(a);	-ok
 int a, b; a=2; b=4; a = a%b; print(a);	-ok
+
+int a; a=[2,2]; print(a); -no
 */
 void interpret(struct _statementList *list){
 	int i;
@@ -47,8 +44,10 @@ void interpretTypeInfo(struct _node *n){
 	}
 }
 void *traversalNode(struct _node *n){
-	int a,b, i;
+	int  a, b, i;
+	void *pa, *pb;
 	void *rz;
+	int a,b;
 	int tmp;
 	char buf[256];
 	#ifdef DEBUG_INTERPRETER
@@ -63,9 +62,15 @@ void *traversalNode(struct _node *n){
 		setScalarDataSymbol(n->val, a);
 		break;
 	case VectorAssign:
-		a=(int)traversalNode(n->son);
-		b=(int)n->bro;
+		a=(int)traversalNode(n->son);//val
+		b=(int)n->bro;//col
 		setVectorDataSymbol(n->val, a, b);
+		break;
+	case MatrixAssign:
+		a=(int)traversalNode(n->son);//val
+		b=(int)n->son->bro->tag;//row
+		tmp=(int)n->son->bro->val;//col
+		setMatrixDataSymbol(n->val, a, b, tmp);
 		break;
 	case ScalarAdd:
 		a=(int)traversalNode(n->son);
@@ -115,6 +120,20 @@ void *traversalNode(struct _node *n){
 		rz=(void *)(a);
 		#ifdef DEBUG_INTERPRETER
 		printf("%d=%d^%d\n",rz,a,b);
+	case VectorAdd:
+		pa=traversalNode(n->son);//VEC *
+		pb=traversalNode(n->son->bro);
+		v_add((VEC *)rz, (VEC *)a,(VEC *)b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d+%d\n",rz,a,b);
+		#endif
+		break;
+	case MatrixAdd:
+		pa=traversalNode(n->son);//VEC *
+		pb=traversalNode(n->son->bro);
+		m_add((MAT *)rz, (MAT *)a,(MAT *)b);
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d+%d\n",rz,a,b);
 		#endif
 		break;
 	case ScalarID:

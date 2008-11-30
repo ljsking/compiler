@@ -102,6 +102,11 @@ void setVectorDataSymbol(int index, int data, int col){
 	VEC *v = (VEC *)dst->data;
 	v->ve[col]=data;
 }
+void setMatrixDataSymbol(int index, int data, int row, int col){
+	Symbol *dst = symbolTable[index];
+	MAT *v = (MAT *)dst->data;
+	v->me[row][col]=data;
+}
 int getScalarSymbol(int index){
 	Symbol *dst = symbolTable[index];
 	#ifdef DEBUG_SYMBOL

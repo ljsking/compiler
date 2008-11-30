@@ -12,6 +12,7 @@
 	struct _statementList *root;
 	struct _statementList *mkScalarAssignmentStatement(int, struct _node *);
 	struct _statementList *mkVectorAssignmentStatement(int, int, struct _node *);
+	struct _statementList *mkMatrixAssignmentStatement(int, int, int, struct _node *);
 %}
 
 %union {
@@ -89,6 +90,7 @@ Statements	: Statements Statement 	{
 Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 			| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
 			| ID OPEN_SQUARE_BRACKET NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
+			| ID OPEN_SQUARE_BRACKET NUMBER COMMA NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
 			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE,0, $3, 0));}
 			;
@@ -138,6 +140,10 @@ struct _statementList *mkScalarAssignmentStatement(int id, struct _node *exp){
 
 struct _statementList *mkVectorAssignmentStatement(int id, int col, struct _node *exp){
 	return mkStatementListWithVal(mktree(VectorAssign, id, (struct _node *)col, exp));
+}
+
+struct _statementList *mkMatrixAssignmentStatement(int id, int row, int col, struct _node *exp){
+	return mkStatementListWithVal(mktree(MatrixAssign, id, mkleaf(row, col), exp));
 }
 
 char *convertTag(int token, char *buff)

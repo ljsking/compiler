@@ -21,6 +21,9 @@
 #define ScalarOr		-18
 #define ScalarData		-19
 #define VectorAssign	-20
+#define MatrixAssign	-21
+#define VectorAdd		-22
+#define MatrixAdd		-23
 
 char *convertTag(int , char *);
 #endif

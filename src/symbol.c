@@ -66,7 +66,7 @@ void setTypeSymbol(int index, struct _type *type){
 int setValueSymbol(int index, struct _vector *val, struct _intList* list){
 	struct _symbol *dst = symbolTable[index];
 	if(dst->type==0) return -1;
-	setIntList(dst->vector->elements, getIntList(val->elements, 0), getOffsetType(dst->type, list->numberElement, list->elements));
+	
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol set value %d\n", index, symbolTable[index]->vector);
 	printIntList(list);

@@ -95,23 +95,23 @@ struct _vector *traversalNode(struct _node *n){
 		#endif
 		break;
 	case NUMBER:
-		v=mkVector(integer);
+		/*v=mkVector(integer);
 		tmp=0;
 		printf("NUBMER\n");
 		setElementVector(v, n->val, 1, &tmp);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode NUMBER(%d)\n",n->val);
-		#endif
+		#endif*/
 		break;
 	case Vector:
-		v=mkVector(integer);
+		/*v=mkVector(integer);
 		tmp=0;
 		setElementVector(v, n->val, 1, &tmp);
 		rz=v;
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode Vector(%d)\n",n->val);
-		#endif
+		#endif*/
 		break;
 	case PRINT:
 		#ifdef DEBUG_INTERPRETER

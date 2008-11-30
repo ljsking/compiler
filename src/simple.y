@@ -25,7 +25,7 @@
 }
 %type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement
 %type  <nodeVal> IDList Exp Term Vector
-%type  <typeVal> Type ScalarType VectorType
+%type  <typeVal> Type
 %type  <intList> NumberList
 
 %token <intVal> ID INT BOOL NUMBER
@@ -62,16 +62,14 @@ DeclareStatement : Type IDList SEMICOLONE {
 						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
 					}
 
-Type : ScalarType
-	 | VectorType
+Type : INT {$$=mkScalarType(0);}
+	 | BOOL{$$=mkScalarType(1);}
+	 | INT OPEN_SQUARE_BRACKET NUMBER CLOSE_SQUARE_BRACKET{$$=mkVectorType(0, $3);}
+	 | BOOL OPEN_SQUARE_BRACKET NUMBER CLOSE_SQUARE_BRACKET{$$=mkVectorType(1, $3);}
+	 | INT OPEN_SQUARE_BRACKET NUMBER COMMA NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(0, $3, $5);}
+	 | BOOL OPEN_SQUARE_BRACKET NUMBER COMMA NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(1, $3, $5);}
+	 ;
 	
-ScalarType : INT {$$=integer;}
-		   | BOOL {$$=boolean;}
-		
-VectorType : ScalarType OPEN_SQUARE_BRACKET NumberList CLOSE_SQUARE_BRACKET {
-					setDimensionType($1, $3);
-				}
-		   ;
 NumberList   : NUMBER{ $$=mkIntList(); insertIntList($$, $1); }
 		   	 | NumberList COMMA NUMBER { insertIntList($1, $3); $$=$1; }
 	
@@ -133,7 +131,6 @@ int yyerror() { puts("syntax error!"); }
 
 int main() { 
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
-	initScalarType();
 	yyparse();
 	interpret(root);
 	return 0;

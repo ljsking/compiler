@@ -11,9 +11,7 @@ struct _vector *mkVector(struct _type *t){
 	struct _vector *v = malloc(sizeof(struct _vector));
 	v->type = t;
 	v->elements=mkIntList();
-	numberOfElements = numberOfElementsType(t);
-	for(i=0;i<numberOfElements;i++)
-		insertElementVector(v, 0);
+	
 	#ifdef DEBUG_VECTOR
 	printf("malloc vector %d\n", v);
 	#endif
@@ -81,12 +79,6 @@ int getElementVector(struct _vector *v, int argc, ...){
 	#ifdef DEBUG_VECTOR
 	printf("VECTOR: getElement argument count: %d in %d\n", argc, v);
 	#endif
-	
-	if(v->type->dimensions->numberElement!=argc)
-	{
-		printf("vector assignment's number is not same as dimension's count\n");
-		exit(-1);
-	}
 
 	printf("getElementVector \n");
 	va_start(ap, argc);
@@ -106,15 +98,7 @@ void setElementVector(struct _vector *v, int value, int argc, int *array){
 	printf("VECTOR: setElement argument count: %d in %d\n", argc, v);
 	#endif
 	
-	if(v->type->dimensions->numberElement!=argc)
-	{
-		printf("vector assignment's number is not same as dimension's count\n");
-		exit(-1);
-	}
 	printf("setElementVector \n");
-	offset = getOffsetType(v->type, argc, array);
-	printf("offset %d \n", offset);
-	setIntList(v->elements, value, offset);
 }
 
 void printVector(struct _vector *v)

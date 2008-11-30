@@ -1,63 +1,50 @@
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
-#include "simple.tab.h"
-#include "intList.h"
 #include "type.h"
-struct _type *integer;
-struct _type *boolean;
-//#define DEBUG_TYPE
-int initScalarType()
-{
-	integer=(struct _type *)malloc(sizeof(struct _type));
-	integer->type = INT;
-	integer->dimensions=mkIntList();
-	insertIntList(integer->dimensions, 1);
-	#ifdef DEBUG_TYPE
-	printf("integer is %d, dimensions is %d\n", integer, integer->dimensions);
-	#endif
-	
-	boolean=(struct _type *)malloc(sizeof(struct _type));
-	boolean->type = BOOL;
-	boolean->dimensions=mkIntList();
-	insertIntList(boolean->dimensions, 1);
-	#ifdef DEBUG_TYPE
-	printf("boolean is %d, dimensions is %d\n", integer, integer->dimensions);
-	#endif
+struct _type *mkScalarType(int boolean){
+	struct _type * type = malloc(sizeof(struct _type));
+	type->boolean = boolean;
+	type->type = ScalarType;
+	type->row = 0;
+	type->col = 0;
+	return type;
 }
-struct _type *mkType(int type)
-{
-	struct _type *t = (struct _type *)malloc(sizeof(struct _type));
-	#ifdef DEBUG_TYPE
-	printf("mkType is %d\n", t);
-	#endif
-	t->type = type;
-	t->dimensions = 0;
-	return t;
+struct _type *mkVectorType(int boolean, int col){
+	struct _type * type = malloc(sizeof(struct _type));
+	type->boolean = boolean;
+	type->type = VectorType;
+	type->row = 0;
+	type->col = col;
+	return type;
 }
-void setDimensionType(struct _type *t, struct _intList *dimensions){
-	t->dimensions = dimensions;
+struct _type *mkMatrixType(int boolean, int row, int col){
+	struct _type * type = malloc(sizeof(struct _type));
+	type->boolean = boolean;
+	type->type = MatrixType;
+	type->row = row;
+	type->col = col;
+	return type;
 }
-int numberOfElementsType(struct _type *t){
-	int i, rz=1;
-	for(i=0;i<t->dimensions->numberElement;i++){
-		rz*=getIntList(t->dimensions, i);
+void printType(Type *t){
+	char type[256];
+	char buff[256];
+	if(t->boolean)
+		strcpy(type, "boolean");
+	else
+		strcpy(type, "integer");
+	switch(t->type){
+		case ScalarType:
+			sprintf(buff, "ScalarType(%s)\n",type);
+		break;
+		case VectorType:
+			sprintf(buff, "VectorType(%s[%d])\n",type,t->col);
+		break;
+		case MatrixType:
+			sprintf(buff, "MatrixType(%s[%d,%d])\n",type,t->row,t->col);
+		break;
+		default:
+			printf("Unknow type\n");
+		break;
 	}
-	return rz;
-}
-int getOffsetType(struct _type *t, int count, int *array){
-	int rz, i, tmp=1;
-	if(count!=t->dimensions->numberElement){
-		printf("size of dimensions is not same as count\n");
-		exit(-1);
-	}
-	for(i=count-1;i>=0;i--){
-		rz+=tmp*array[i];
-		tmp*=t->dimensions->elements[i];
-	}
-	return rz;
-}
-void printType(struct _type *t){
-	char buf[256];
-	printf("\nType:%s ",convertTag(t->type, buf));
-	printIntList(t->dimensions);
 }

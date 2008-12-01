@@ -98,12 +98,6 @@ void setTypeSymbol(int index, struct _type *type){
 	printf("\n");
 	#endif
 }
-int setValueSymbol(int index, struct _vector *val, struct _node* node){
-	struct _symbol *dst = symbolTable[index];
-	char buf[256];
-	printf("tag is %s\n", convertTag(node->tag, buf));
-	return 0;
-}
 void setScalarDataSymbol(int index, int data){
 	Symbol *dst = symbolTable[index];
 	dst->data = (void *)data;

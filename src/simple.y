@@ -24,7 +24,7 @@
 	struct _intList *intList;
 	struct _statementList *stmtList;
 }
-%type  <stmtList> Statements DeclareStatements ExpStatements DeclareStatement ExpStatement MainFunction
+%type  <stmtList> Statements DeclareStatements ExpStatements DeclareStatement ExpStatement MainFunction Function Program
 %type  <nodeVal> IDList Exp Term
 %type  <typeVal> Type
 %type  <intVal>  Number
@@ -41,8 +41,14 @@
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
+Program	: MainFunction {root=$1;}
+		| Function Program
+		;
+
 MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
 				;
+
+Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6}
 
 Statements	: DeclareStatements ExpStatements {	mergeStatementList($1,$2); freeStatementList($2); $$=$1;}
 			| DeclareStatements

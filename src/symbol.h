@@ -1,7 +1,6 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 #define MAX_SYMBOL_SIZE 100
-#include "vector.h"
 #include "node.h"
 #include "type.h"
 typedef struct _symbol {
@@ -15,7 +14,6 @@ Symbol *mkSymbol(Type *, void *);
 int insertSymbolTable(char *);
 void initializeSymbol(int, struct _type *);
 void setTypeSymbol(int, struct _type *);
-int setValueSymbol(int, struct _vector *, struct _node*);
 void setScalarDataSymbol(int, int);
 void setVectorDataSymbol(int, int, int);
 void setMatrixDataSymbol(int, int, int, int);

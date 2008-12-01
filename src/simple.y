@@ -127,7 +127,7 @@ int main() {
 	initType();
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	yyparse();
-	interpret(root);
+	interpretForMain(root);
 	return 0;
 }
 

@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "mesch/matrix.h"
 #include "simple.tab.h"
 #include "simple.h"
 #include "type.h"
 #include "symbol.h"
-#include "mesch/matrix.h"
+#include "function.h"
 #include "interpreter.h"
 //#define DEBUG_INTERPRETER
 
@@ -27,18 +28,30 @@ int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}
 int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);}
 int main(){test(); return 0;} // need to rise error.
 int test(){int a;print(a);}int main(){int b;test();b=2;print(b);}
+int test(){int a;a=2;return a;}int main(){int b;b=test();print(b);}
 
 Working List
-int test(){int a;a=2;return 2}int main(){int b;b=test();print(b);}
 
 Need to work List
 int a; a=[2,2]; print(a);
 */
-void interpret(struct _statementList *list){
+void interpretForMain(struct _statementList *list){
 	int i;
 	for(i=0;i<list->numberElement;i++){
 		traversalNode(list->elements[i]);
 	}
+}
+Symbol *interpretForFunction(struct _statementList *list){
+	int i;
+	Symbol *rz;
+	Node *lastNode;
+	for(i=0;i<list->numberElement;i++){
+		rz=traversalNode(list->elements[i]);
+	}
+	lastNode = list->elements[list->numberElement-1];
+	if(lastNode->tag!=RETURN)
+		rz=NULL;
+	return rz;
 }
 void interpretTypeInfo(struct _node *n){
 	struct _type *t = (struct _type *)n->val;
@@ -383,7 +396,7 @@ Symbol *traversalNode(struct _node *n){
 		#endif
 		break;
 	case NUMBER:
-		rz=(Symbol*)mkSymbol((Type *)IntegerScalarType,(void *)n->val);
+		rz=mkSymbol((Type *)IntegerScalarType,(void *)n->val);
 		break;
 	case WHILE:
 		n=n->son;//exp
@@ -394,7 +407,7 @@ Symbol *traversalNode(struct _node *n){
 			exit(-1);
 		}
 		while(idata_a){
-			interpret(list);
+			interpretForMain(list);
 			pa = traversalNode(n);
 			idata_a = (int)(pa->data);
 		}
@@ -406,9 +419,8 @@ Symbol *traversalNode(struct _node *n){
 		printSymbolByIndex(n->val);
 		break;
 	case FunctionCall:
-		idata_a = n->val;//id index
-		callFunction(idata_a);
-	break;
+		rz=callFunction((int)(n->val));//id_index
+		break;
 	}
 	return rz;
 }

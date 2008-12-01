@@ -25,6 +25,8 @@ int main(){int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c);} -ok
 int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}	-ok
 int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);} -ok
 
+int test(){return 10;}int main(){int a;a=test();print(a);} -working
+
 int a; a=[2,2]; print(a); -no
 */
 void interpret(struct _statementList *list){
@@ -99,11 +101,11 @@ Symbol *traversalNode(struct _node *n){
 				m_add((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
 			break;
+			default:
+				printf("Not allowed type in add\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d+%d\n",rz,a,b);
-		#endif
 		break;
 	case SUB_OP:
 		pa=traversalNode(n->son);
@@ -126,11 +128,11 @@ Symbol *traversalNode(struct _node *n){
 				m_sub((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
 			break;
+			default:
+				printf("Not allowed type in sub\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d-%d\n",rz,a,b);
-		#endif
 		break;
 	case MUL_OP:
 		pa=traversalNode(n->son);
@@ -143,19 +145,17 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA*(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
-			break;
 			case MatrixType:
 				dataRz = m_copy(dataA, MNULL);
 				m_mlt((MAT *)dataA,(MAT *)dataB,(MAT *)dataRz);
 				rz=mkSymbol(pa->type, dataRz);
 			break;
+			default:
+				printf("Not allowed type in mul\n");
+				exit(-1);
+			break;
 
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d*%d\n",rz,a,b);
-		#endif
 		break;
 	case DIV_OP:
 		pa=traversalNode(n->son);
@@ -168,13 +168,11 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA*(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
+			default:
+				printf("Not allowed type in div\n");
+				exit(-1);
 			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d/%d\n",rz,a,b);
-		#endif
 		break;
 
 	case MOD_OP:
@@ -188,13 +186,11 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA%(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
+			default:
+				printf("Not allowed type in mod\n");
+				exit(-1);
 			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d%%d\n",rz,a,b);
-		#endif
 		break;
 	case POW_OP:
 		pa=traversalNode(n->son);
@@ -212,11 +208,11 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in pow\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d^%d\n",rz,a,b);
-		#endif
 		break;
 	case GRT_OP:
 		pa=traversalNode(n->son);
@@ -235,11 +231,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in GRT\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d>%d\n",rz,a,b);
-		#endif
 		break;
 	case LES_OP:
 		pa=traversalNode(n->son);
@@ -258,11 +254,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in LES\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d<%d\n",rz,a,b);
-		#endif
 		break;
 	case GE_OP:
 		pa=traversalNode(n->son);
@@ -281,11 +277,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in GE\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d>=%d\n",rz,a,b);
-		#endif
 		break;
 	case LE_OP:
 		pa=traversalNode(n->son);
@@ -304,11 +300,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in LE\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d<=%d\n",rz,a,b);
-		#endif
 		break;
 	case EQ_OP:
 		pa=traversalNode(n->son);
@@ -327,11 +323,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in EQ\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d==%d\n",rz,a,b);
-		#endif
 		break;
 	case NE_OP:
 		pa=traversalNode(n->son);
@@ -350,11 +346,11 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in EQ\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d!=%d\n",rz,a,b);
-		#endif
 		break;
 	case INC_OP:
 		pa=traversalNode(n->son->bro);
@@ -369,19 +365,19 @@ Symbol *traversalNode(struct _node *n){
 				dataRz = (void*)idata_a;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
+			default:
+				printf("Not allowed type in inc\n");
+				exit(-1);
+			break;
 		}
-		
-		#ifdef DEBUG_INTERPRETER
-		printf("%d=++%d\n",rz,a);
-		#endif
 		break;
-	case ScalarID:
+	case ID:
 		rz=getSymbol(n->val);
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode getValFromSymbol(%d:%d)\n",n->val, rz);
 		#endif
 		break;
-	case ScalarData:
+	case NUMBER:
 		rz=(Symbol*)mkSymbol((Type *)IntegerScalarType,(void *)n->val);
 		break;
 	case WHILE:

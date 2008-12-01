@@ -29,6 +29,7 @@
 %type  <typeVal> Type
 %type  <intVal>  Number
 
+%token RETURN
 %token <intVal> ID INT BOOL POSITIVE_NUMBER NEGATIVE_NUMBER FUNTION_ID
 %token <intVal> ASS_OP ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
 %token <intVal> LES_OP GRT_OP NOT_OP LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -84,6 +85,7 @@ ExpStatement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
 				| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
 				| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
+				| RETURN Exp SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(RETURN,(int)$2)); }
 				;
 			
 			
@@ -97,7 +99,7 @@ Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp NE_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
-	| Term					{ $$=$1;}
+	| Term				{ $$=$1;}
 	;
 	
 Term	: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -110,8 +112,8 @@ Term	: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
 		| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 		| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
 		| NOT_OP Term		{ $$=mktree($1, 0, 0, $2);}
-		| ID				{ $$=mkleaf(ScalarID, $1);}
-		| Number			{ $$=mkleaf(ScalarData,$1);}
+		| ID				{ $$=mkleaf(ID, $1);}
+		| Number			{ $$=mkleaf(NUMBER,$1);}
 		;
 			
 Number 	: POSITIVE_NUMBER
@@ -200,19 +202,16 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "prnt");break;
 	case WHILE:
 		strcpy(buff, "while");break;
-	case ScalarID:
-		strcpy(buff, "scalarID");break;
-	case ScalarData:
-		strcpy(buff, "scalarData");break;
 	case ScalarAssign:
 		strcpy(buff, "scalarAssign");break;
 	case VectorAssign:
 		strcpy(buff, "vectorAssign");break;
 	case MatrixAssign:
 		strcpy(buff, "matrixAssign");break;
-		
+	case NUMBER:
+		strcpy(buff, "number");break;	
 	default:
-		strcpy(buff, "");break;
+		sprintf(buff, "unknown token %d",token);break;
 	}
 	return buff;
 }

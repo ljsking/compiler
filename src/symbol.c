@@ -22,6 +22,9 @@ int isDuplicated(char *id)
 	return -1;
 }
 Symbol *mkSymbol(Type *type, void *data){
+	#ifdef DEBUG_SYMBOL
+	printf("mkSymbol: %d %d\n",type,data);
+	#endif
 	Symbol *s=malloc(sizeof(Symbol));
 	symbolTable[nextSymbol] = s;
 	nextSymbol++;
@@ -58,6 +61,9 @@ int insertSymbolTable(char *id)
 	return nextSymbol-1;
 }
 void printSymbol(Symbol *s){
+	#ifdef DEBUG_SYMBOL
+	printf("print symbol %d type:%d type:%d\n", s, s->type, s->type);
+	#endif
 	switch(s->type->type){
 		case ScalarType:
 			printf("Scalar %d\n",s->data);

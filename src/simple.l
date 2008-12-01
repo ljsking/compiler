@@ -11,6 +11,7 @@
 "print" return (PRINT);
 "while"	return (WHILE);
 "main"	return (MAIN);
+"return" return (RETURN);
 [a-zA-Z]+ {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ,		{return(COMMA);}

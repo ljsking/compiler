@@ -11,19 +11,19 @@
 Symbol *traversalNode(struct _node *);
 
 /*
-int a;a=2+2;print(a);-ok
-int a;int[2]b;int[2,2]c;print(a);print(b);print(c);-ok
-int a,b,c; a=2; b=3; c=a+b; print(c);-ok
-int [3] v;v[0]=1;print(v); -ok
-int [3,2] a;a[1,1]=2;print(a); -ok
-int a, b; a=2; b=4; a = a-b; print(a);	-ok
-int a, b; a=2; b=4; a = a*b; print(a);	-ok
-int a, b; a=2; b=4; a = a/b; print(a);	-ok
-int a, b; a=2; b=4; a = a%b; print(a);	-ok
-int [3] v;v[0]=1;v[1]=2;print(v); -ok
-int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c); -ok
-int a, b, c; a=1; b=2; c=a>b; print(c);	-ok
-int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a); -ok
+int main(){int a;a=2+2;print(a);}-ok
+int main(){int a;int[2]b;int[2,2]c;print(a);print(b);print(c);}-ok
+int main(){int a,b,c; a=2; b=3; c=a+b; print(c);}-ok
+int main(){int [3] v;v[0]=1;print(v);} -ok
+int main(){int [3,2] a;a[1,1]=2;print(a);} -ok
+int main(){int a, b; a=2; b=4; a = a-b; print(a);}	-ok
+int main(){int a, b; a=2; b=4; a = a*b; print(a);}	-ok
+int main(){int a, b; a=2; b=4; a = a/b; print(a);}	-ok
+int main(){int a, b; a=2; b=4; a = a%b; print(a);}	-ok
+int main(){int [3] v;v[0]=1;v[1]=2;print(v);} -ok
+int main(){int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c);} -ok
+int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}	-ok
+int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);} -ok
 
 int a; a=[2,2]; print(a); -no
 */

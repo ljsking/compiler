@@ -24,32 +24,31 @@
 	struct _intList *intList;
 	struct _statementList *stmtList;
 }
-%type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement FunctionStatement Parameters
+%type  <stmtList> DeclareStatements Statements DeclareStatement Statement Function
 %type  <nodeVal> IDList Exp ScalarTerm ScalarExp
 %type  <typeVal> Type
 %type  <intVal>  Number
 
-%token <intVal> ID INT BOOL POSITIVE_NUMBER NEGATIVE_NUMBER
-%token <intVal> ASS_OP
-%token <intVal> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
-%token <intVal> LES_OP GRT_OP NOT_OP
+%token <intVal> ID INT BOOL POSITIVE_NUMBER NEGATIVE_NUMBER FUNTION_ID
+%token <intVal> ASS_OP ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP POW_OP
+%token <intVal> LES_OP GRT_OP NOT_OP LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
 %token <intVal> ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
-%token <intVal> LE_OP GE_OP EQ_OP NE_OP AND_OP OR_OP
 %token <intVal> INC_OP DEC_OP
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET OPEN_BRACKET CLOSE_BRACKET PRINT WHILE
+%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET OPEN_BRACKET CLOSE_BRACKET PRINT WHILE MAIN
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
-Program		: DeclareStatements Statements{ 
-						mergeStatementList($1,$2); 
-						freeStatementList($2);
-						root=$1;
+Function	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET DeclareStatements Statements CLOSE_BRACKET { 
+						mergeStatementList($6,$7); 
+						freeStatementList($7);
+						$$=$6;
+						root=$$;
 					}
-			| Statements{root=$$;}
-			| DeclareStatements{root=$$;}
+			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
+			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET DeclareStatements CLOSE_BRACKET {$$=$6; root=$$;}
 			;
 
 DeclareStatements : DeclareStatements DeclareStatement { 
@@ -58,13 +57,7 @@ DeclareStatements : DeclareStatements DeclareStatement {
 						$$=$1;
 					}
 				  | DeclareStatement
-				  | FunctionStatement
 				  ;
-	
-FunctionStatement : Type ID OPEN_ROUND_BRACKET Parameters CLOSE_ROUND_BRACKET SEMICOLONE { $$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
-					;
-Parameters	: Type ID COMMA {$$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
-			| Type ID {$$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
 
 DeclareStatement : Type IDList SEMICOLONE { $$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));};
 					

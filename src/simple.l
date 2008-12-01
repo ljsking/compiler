@@ -8,13 +8,14 @@
 \-[0-9]+	{yylval.intVal = atoi(yytext); return (NEGATIVE_NUMBER);}
 "int"	{yylval.intVal = INT; return(INT); }
 "bool"  {yylval.intVal = BOOL; return(BOOL); }
-"print" {return (PRINT);}
-"while"	{return (WHILE);}
+"print" return (PRINT);
+"while"	return (WHILE);
+"main"	return (MAIN);
 [a-zA-Z]+ {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ,		{return(COMMA);}
 ;		{return(SEMICOLONE);};
-"#"		return (0);
+\n		return (0);
 
 "+="	{yylval.intVal = ADD_ASSIGN; return(ADD_ASSIGN); };
 "-="	{yylval.intVal = SUB_ASSIGN; return(SUB_ASSIGN); };

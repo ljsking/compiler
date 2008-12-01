@@ -12,6 +12,8 @@
 "while"	return (WHILE);
 "main"	return (MAIN);
 "return" return (RETURN);
+"if"	return (IF);
+"else"  return (ELSE);
 [a-zA-Z]+[0-9]*[a-zA-Z]* {yylval.intVal = insertSymbolTable(yytext); return (ID); }
 [ \t]	;
 ,		{return(COMMA);}

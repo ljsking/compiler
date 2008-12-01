@@ -29,14 +29,20 @@ int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);}
 int main(){test(); return 0;} // need to rise error.
 int test(){int a;print(a);}int main(){int b;test();b=2;print(b);}
 int test(){int a;a=2;return a;}int main(){int b;b=test();print(b);}
+int main(){int a;if(1){print(a);}}
+int main(){int a;if(0){print(a);}}
+int main(){int a;a=1;if(a){print(a);}}
+int main(){int a,b;a=1;if(a){print(a);}else{print(b);}}
+int main(){int a,b;a=0;b=1;if(a){print(a);}else{print(b);}}
+int main(){int [2] a, b; int c; a[0]=1; a[1]=2; b[0]=3; b[1]=4; c=a.*b; print(c);}
+int main(){int [2] a, b; int c; a[0]=1; a[1]=2; b[0]=3; b[1]=4; c=a./b; print(c);}
+int main(){int [2] a, b; int c; a[0]=1; a[1]=2; b[0]=3; b[1]=4; c=a.^b; print(c);}
 int test(){int a;a=2;print(a);}int main(){int a;a=3;test();print(a);} //print 2, 3 because scope
 int test(int a, int b){return a+b;}int main(){int c;c=test(2,3);print(c);}
 int test(int a, int b){print(2);return 3;}int main(){int a,b,c;c=test(a,b);print(c);}
 int test(){return 2;}int main(){int a;a=test();print(a);}
 
 Working List
-
-//Parameters' type is ?, arguments' type is IDList
 
 Need to work List
 int a; a=[2,2]; print(a);
@@ -73,10 +79,12 @@ void interpretTypeInfo(struct _node *n){
 	}
 }
 Symbol *traversalNode(struct _node *n){
-	int  a, b, i;
+	int  a, b, i, j;
 	Symbol *pa, *pb;
 	void *dataA, *dataB, *dataRz;
 	Symbol *rz;
+	VEC *vec1, *vec2;
+	unsigned int dim;
 	int tmp, tmp_data, idata_a, idata_b;
 	StatementList *list;
 	char buf[256];
@@ -232,6 +240,120 @@ Symbol *traversalNode(struct _node *n){
 			break;
 			default:
 				printf("Not allowed type in pow\n");
+				exit(-1);
+			break;
+		}
+		break;
+	case ELE_MUL_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+
+		vec1 = (VEC*)dataA;
+		vec2 = (VEC*)dataB;
+
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA*(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:
+				dim = vec1->dim;
+				tmp = 0;
+				for ( i=0; i<dim; i++ )
+				{
+					tmp += vec1->ve[i]*vec2->ve[i];
+				}
+				dataRz=(void*)((int)tmp);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
+			break;
+			case MatrixType:
+			break;
+			default:
+				printf("Not allowed type in vector .* vector = scalar\n");
+				exit(-1);
+			break;
+		}
+		break;
+	case ELE_DIV_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+
+		vec1 = (VEC*)dataA;
+		vec2 = (VEC*)dataB;
+
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA/(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:
+				dim = vec1->dim;
+				tmp = 0;
+				for ( i=0; i<dim; i++ )
+				{
+					tmp += vec1->ve[i]/vec2->ve[i];
+				}
+				dataRz=(void*)((int)tmp);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
+			break;
+			case MatrixType:
+			break;
+			default:
+				printf("Not allowed type in vector ./ vector = scalar\n");
+				exit(-1);
+			break;
+		}
+		break;
+	case ELE_POW_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+
+		vec1 = (VEC*)dataA;
+		vec2 = (VEC*)dataB;
+
+		switch(pa->type->type){
+			case ScalarType:
+				dataRz=(void*)((int)dataA/(int)dataB);
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			case VectorType:
+				dim = vec1->dim;
+				tmp = 0;
+				tmp_data = 0;
+				for (i = 0; i < dim; i++)
+				{
+					tmp = 1;
+					for (j = 0; j < vec2->ve[i]; j++)
+					{
+						tmp *= vec1->ve[i];
+					}
+					tmp_data += tmp;
+				}
+				dataRz=(void*)((int)tmp_data);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
+			break;
+			case MatrixType:
+			break;
+			default:
+				printf("Not allowed type in vector ./ vector = scalar\n");
 				exit(-1);
 			break;
 		}
@@ -410,10 +532,28 @@ Symbol *traversalNode(struct _node *n){
 			printf("while's exp is not scalar\n");
 			exit(-1);
 		}
+		idata_a = (int)(pa->data);
 		while(idata_a){
 			interpretForMain(list);
 			pa = traversalNode(n);
 			idata_a = (int)(pa->data);
+		}
+		break;
+	case IF:
+		list =(StatementList *)n->val;
+		n=n->son;
+		pa = traversalNode(n);//exp
+		if(pa->type->type!=ScalarType){
+			printf("if's exp is not scalar\n");
+			exit(-1);
+		}
+		idata_a = (int)(pa->data);
+		if(idata_a){
+			interpretForMain(list);//list
+		}
+		list=(StatementList *)n->bro;//else
+		if(list&&!idata_a){
+			interpretForMain(list);//list
 		}
 		break;
 	case PRINT:

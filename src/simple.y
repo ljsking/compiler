@@ -37,7 +37,7 @@
 %token <intVal> ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %token <intVal> INC_OP DEC_OP
 %token <intVal> ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
-%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET OPEN_BRACKET CLOSE_BRACKET PRINT WHILE MAIN
+%token SEMICOLONE COMMA OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET OPEN_BRACKET CLOSE_BRACKET PRINT WHILE MAIN IF ELSE
 %left  MUL_OP DIV_OP MOD_OP POW_OP ELE_MUL_OP ELE_DIV_OP ELE_POW_OP
 %right INC_OP DEC_OP NOT_OP
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
@@ -97,9 +97,10 @@ ExpStatement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
 				| PRINT OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,(int)$3)); }
 				| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
+				| IF OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET { $$ = mkStatementListWithVal(mktree(IF, (int)$6, 0, $3));}			
+				| IF OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET ELSE OPEN_BRACKET Statements CLOSE_BRACKET  { $$ = mkStatementListWithVal(mktree(IF, (int)$6, (Node *)$10, $3));}
 				| RETURN Exp SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(RETURN,(int)$2)); }
 				;
-			
 			
 Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
@@ -217,6 +218,10 @@ char *convertTag(int token, char *buff)
 		strcpy(buff, "prnt");break;
 	case WHILE:
 		strcpy(buff, "while");break;
+	case IF:
+		strcpy(buff, "if");break;
+	case ELSE:
+		strcpy(buff, "else");break;
 	case ScalarAssign:
 		strcpy(buff, "scalarAssign");break;
 	case VectorAssign:

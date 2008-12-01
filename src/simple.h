@@ -7,9 +7,12 @@
 #define NumberList		-4
 #define NUMBER			-5
 #define ScalarAssign	-6
-#define VectorAssign	-8
-#define MatrixAssign	-9
-#define FuncInfo		-10
+#define VectorAssign	-7
+#define MatrixAssign	-8
+#define FuncInfo		-9
+#define PARAM			-10
+#define PARAMS			-11
+#define ArgList			-12
 
 char *convertTag(int , char *);
 #endif

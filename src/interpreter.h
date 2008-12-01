@@ -4,4 +4,5 @@
 #include "symbol.h"
 void interpretForMain(struct _statementList *);
 Symbol *interpretForFunction(struct _statementList *);
+Symbol *traversalNode(struct _node *);
 #endif

@@ -8,6 +8,7 @@
 	#include "statementList.h"
 	#include "interpreter.h"
 	#include "symbol.h"
+	#include "function.h"
 	#include "simple.h"
 	struct _statementList *root;
 	struct _statementList *mkScalarAssignmentStatement(int, struct _node *);
@@ -25,7 +26,7 @@
 	struct _statementList *stmtList;
 }
 %type  <stmtList> Statements DeclareStatements ExpStatements DeclareStatement ExpStatement MainFunction Function Program
-%type  <nodeVal> IDList Exp Term Parameters Parameter
+%type  <nodeVal> IDList Exp Term Parameters Parameter ArgumentList
 %type  <typeVal> Type
 %type  <intVal>  Number
 
@@ -49,12 +50,12 @@ Program	: MainFunction {root=$1;}
 MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope(1);$$=$6; root=$$;}
 				;
 
-Function	: Type ID OPEN_ROUND_BRACKET Parameters CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $7);}
-			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $6);}
+Function	: Type ID OPEN_ROUND_BRACKET Parameters CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $7, $4);}
+			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $6, 0);}
 			;
 			
-Parameters	: Parameter
-			| Parameters COMMA Parameter
+Parameters	: Parameter {$$=mktree(PARAM, 0, 0, mkleaf(PARAM, (int)$1)); }
+			| Parameters COMMA Parameter {$$=mkbro($1,mkleaf(PARAM, (int)$3));}
 			
 Parameter	: Type ID{$$=mkleaf((int)$1, $2);}
 
@@ -77,6 +78,10 @@ Type : INT {$$=mkScalarType(0);}
 	 | INT OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(0, $3, $5);}
 	 | BOOL OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET{$$=mkMatrixType(1, $3, $5);}
 	 ;
+	
+ArgumentList 	: Exp {$$=mktree(ArgList, 0, 0, mkleaf(ID, (int)$1))}
+				| ArgumentList COMMA Exp{$$=mkbro($1,mkleaf(ID, (int)$3));}
+				;
 	
 IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
@@ -107,7 +112,7 @@ Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET {$$=mkleaf(FunctionCall, $1)}
-	| ID OPEN_ROUND_BRACKET IDList CLOSE_ROUND_BRACKET {$$=mkleaf(FunctionCall, $1)}
+	| ID OPEN_ROUND_BRACKET ArgumentList CLOSE_ROUND_BRACKET {$$=mktree(FunctionCall, $1, 0, $3);}
 	| Term				{ $$=$1;}
 	;
 	

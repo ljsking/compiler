@@ -24,4 +24,5 @@ struct _type *getTypeSymbol(int);
 void printSymbol(struct _symbol *);
 void printSymbolByIndex(int);
 void setScope(int);
+int getScope();
 #endif

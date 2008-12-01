@@ -12,6 +12,9 @@ static int scope;//0: root, 1: main
 void setScope(int Scope){
 	scope=Scope;
 }
+int getScope(){
+	return scope;
+}
 int isDuplicated(char *id)
 {
 	Symbol *s;

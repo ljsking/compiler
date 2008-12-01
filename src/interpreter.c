@@ -30,11 +30,13 @@ int main(){test(); return 0;} // need to rise error.
 int test(){int a;print(a);}int main(){int b;test();b=2;print(b);}
 int test(){int a;a=2;return a;}int main(){int b;b=test();print(b);}
 int test(){int a;a=2;print(a);}int main(){int a;a=3;test();print(a);} //print 2, 3 because scope
-
-Working List
+int test(int a, int b){return a+b;}int main(){int c;c=test(2,3);print(c);}
 int test(int a, int b){print(2);return 3;}int main(){int a,b,c;c=test(a,b);print(c);}
 int test(){return 2;}int main(){int a;a=test();print(a);}
-int test(int a, int b){return a+b;}int main(){int c;c=test(2,3);print(c);}//Parameters' type is ?, arguments' type is IDList
+
+Working List
+
+//Parameters' type is ?, arguments' type is IDList
 
 Need to work List
 int a; a=[2,2]; print(a);
@@ -78,9 +80,7 @@ Symbol *traversalNode(struct _node *n){
 	int tmp, tmp_data, idata_a, idata_b;
 	StatementList *list;
 	char buf[256];
-	#ifdef DEBUG_INTERPRETER
-	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
-	#endif
+	//printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
 	switch(n->tag){
 	case TypeInfo:
 		interpretTypeInfo(n);
@@ -425,7 +425,11 @@ Symbol *traversalNode(struct _node *n){
 		printSymbol(pa);
 		break;
 	case FunctionCall:
-		rz=callFunction((int)(n->val));//id_index
+		idata_a = getScope(); //previous id
+		idata_b = (int)(n->val); //function id;
+		setScope(idata_b);
+		rz=callFunction(idata_b, n->son);//id_index
+		setScope(idata_a);
 		break;
 	case RETURN:
 		n=(Node *)n->val;

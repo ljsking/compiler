@@ -6,7 +6,8 @@ typedef struct _function{
 	Symbol 	*symbol;
 	Type	*returnType;
 	StatementList *list;
+	Node	*params;
 }Function;
-void initializeFunction(int, Type *, StatementList *);
-Symbol *callFunction(int);
+void initializeFunction(int, Type *, StatementList *, Node *);
+Symbol *callFunction(int, Node *);
 #endif

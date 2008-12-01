@@ -25,7 +25,7 @@
 	struct _statementList *stmtList;
 }
 %type  <stmtList> Statements DeclareStatements ExpStatements DeclareStatement ExpStatement MainFunction Function Program
-%type  <nodeVal> IDList Exp Term
+%type  <nodeVal> IDList Exp Term Parameters Parameter
 %type  <typeVal> Type
 %type  <intVal>  Number
 
@@ -49,7 +49,14 @@ Program	: MainFunction {root=$1;}
 MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope(1);$$=$6; root=$$;}
 				;
 
-Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $6);}
+Function	: Type ID OPEN_ROUND_BRACKET Parameters CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $7);}
+			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $6);}
+			;
+			
+Parameters	: Parameter
+			| Parameters COMMA Parameter
+			
+Parameter	: Type ID{$$=mkleaf((int)$1, $2);}
 
 Statements	: DeclareStatements ExpStatements {	mergeStatementList($1,$2); freeStatementList($2); $$=$1;}
 			| DeclareStatements
@@ -83,7 +90,7 @@ ExpStatement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
 				| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
 				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
 				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
-				| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
+				| PRINT OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,(int)$3)); }
 				| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
 				| RETURN Exp SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(RETURN,(int)$2)); }
 				;
@@ -100,6 +107,7 @@ Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET {$$=mkleaf(FunctionCall, $1)}
+	| ID OPEN_ROUND_BRACKET IDList CLOSE_ROUND_BRACKET {$$=mkleaf(FunctionCall, $1)}
 	| Term				{ $$=$1;}
 	;
 	

@@ -32,6 +32,9 @@ int test(){int a;a=2;return a;}int main(){int b;b=test();print(b);}
 int test(){int a;a=2;print(a);}int main(){int a;a=3;test();print(a);} //print 2, 3 because scope
 
 Working List
+int test(int a, int b){print(2);return 3;}int main(){int a,b,c;c=test(a,b);print(c);}
+int test(){return 2;}int main(){int a;a=test();print(a);}
+int test(int a, int b){return a+b;}int main(){int c;c=test(2,3);print(c);}//Parameters' type is ?, arguments' type is IDList
 
 Need to work List
 int a; a=[2,2]; print(a);
@@ -417,10 +420,16 @@ Symbol *traversalNode(struct _node *n){
 		#ifdef DEBUG_INTERPRETER
 		printf("traversalNode PRINT(%d)\n",n->val);
 		#endif
-		printSymbolByIndex(n->val);
+		n=(Node *)n->val;//exp
+		pa = traversalNode(n);
+		printSymbol(pa);
 		break;
 	case FunctionCall:
 		rz=callFunction((int)(n->val));//id_index
+		break;
+	case RETURN:
+		n=(Node *)n->val;
+		rz=traversalNode(n);
 		break;
 	}
 	return rz;

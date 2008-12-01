@@ -49,7 +49,7 @@ Program	: MainFunction {root=$1;}
 MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
 				;
 
-Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6}
+Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {initializeFunction($2, $1, $6);}
 
 Statements	: DeclareStatements ExpStatements {	mergeStatementList($1,$2); freeStatementList($2); $$=$1;}
 			| DeclareStatements

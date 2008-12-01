@@ -53,6 +53,7 @@ int insertSymbolTable(char *id){
 	symbolTable[nextSymbol]->id = buf;
 	symbolTable[nextSymbol]->type = 0;
 	symbolTable[nextSymbol]->data = 0;
+	symbolTable[nextSymbol]->function = 0;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol %s is malloc in %d\n", nextSymbol, buf, symbolTable[nextSymbol]);
 	#endif

@@ -5,6 +5,7 @@
 #include "type.h"
 typedef struct _symbol {
 	char *id;
+	int	 function;
 	struct _type *type;
 	void *data;
 }Symbol;

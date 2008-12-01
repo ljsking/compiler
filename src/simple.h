@@ -10,6 +10,7 @@
 #define ScalarData		-7
 #define VectorAssign	-8
 #define MatrixAssign	-9
+#define FuncInfo		-10
 
 char *convertTag(int , char *);
 #endif

@@ -24,7 +24,7 @@
 	struct _intList *intList;
 	struct _statementList *stmtList;
 }
-%type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement
+%type  <stmtList> Program DeclareStatements Statements DeclareStatement Statement FunctionStatement Parameters
 %type  <nodeVal> IDList Exp ScalarTerm ScalarExp
 %type  <typeVal> Type
 %type  <intVal>  Number
@@ -58,13 +58,15 @@ DeclareStatements : DeclareStatements DeclareStatement {
 						$$=$1;
 					}
 				  | DeclareStatement
+				  | FunctionStatement
 				  ;
 	
-
-DeclareStatement : Type IDList SEMICOLONE { 
-						$$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));
-					}
+FunctionStatement : Type ID OPEN_ROUND_BRACKET Parameters CLOSE_ROUND_BRACKET SEMICOLONE { $$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
 					;
+Parameters	: Type ID COMMA {$$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
+			| Type ID {$$=mkStatementListWithVal(mktree(FuncInfo, (int)$1, 0, (int)$2));}
+
+DeclareStatement : Type IDList SEMICOLONE { $$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));};
 					
 Number 	: POSITIVE_NUMBER
 		| NEGATIVE_NUMBER

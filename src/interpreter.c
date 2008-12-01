@@ -22,8 +22,8 @@ int a, b; a=2; b=4; a = a/b; print(a);	-ok
 int a, b; a=2; b=4; a = a%b; print(a);	-ok
 int [3] v;v[0]=1;v[1]=2;print(v); -ok
 int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c); -ok
-
-int a,i;i=0;a=0;while(a<4){a=a+i;i=i+1;}print(a);#
+int a, b, c; a=1; b=2; c=a>b; print(c);	-ok
+int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a); -ok
 
 int a; a=[2,2]; print(a); -no
 */
@@ -212,8 +212,6 @@ Symbol *traversalNode(struct _node *n){
 				dataRz=(void*)((int)dataA);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
-			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
@@ -237,12 +235,10 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
-			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d^%d\n",rz,a,b);
+		printf("%d=%d>%d\n",rz,a,b);
 		#endif
 		break;
 	case LES_OP:
@@ -262,12 +258,121 @@ Symbol *traversalNode(struct _node *n){
 					dataRz = (void*)0;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
-			case VectorType:				
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d<%d\n",rz,a,b);
+		#endif
+		break;
+	case GE_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a >= idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
 			break;
 		}
 		
 		#ifdef DEBUG_INTERPRETER
-		printf("%d=%d^%d\n",rz,a,b);
+		printf("%d=%d>=%d\n",rz,a,b);
+		#endif
+		break;
+	case LE_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a <= idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d<=%d\n",rz,a,b);
+		#endif
+		break;
+	case EQ_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a == idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d==%d\n",rz,a,b);
+		#endif
+		break;
+	case NE_OP:
+		pa=traversalNode(n->son);
+		pb=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		dataB = pb->data;
+
+		idata_a = (int)dataA;
+		idata_b = (int)dataB;
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a != idata_b)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=%d!=%d\n",rz,a,b);
+		#endif
+		break;
+	case INC_OP:
+		pa=traversalNode(n->son->bro);
+		
+		dataA = pa->data;
+		
+		idata_a = (int)dataA;
+		
+		switch(pa->type->type){
+			case ScalarType:
+				idata_a = idata_a + 1;
+				dataRz = (void*)idata_a;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+		}
+		
+		#ifdef DEBUG_INTERPRETER
+		printf("%d=++%d\n",rz,a);
 		#endif
 		break;
 	case ScalarID:

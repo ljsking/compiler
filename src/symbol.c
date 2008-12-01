@@ -35,8 +35,7 @@ Symbol *mkSymbol(Type *type, void *data){
 Symbol *getSymbol(int index){
 	return symbolTable[index];
 }
-int insertSymbolTable(char *id)
-{
+int insertSymbolTable(char *id){
 	int i;
 	char *buf;
 	if(nextSymbol>MAX_SYMBOL_SIZE){
@@ -55,7 +54,7 @@ int insertSymbolTable(char *id)
 	symbolTable[nextSymbol]->type = 0;
 	symbolTable[nextSymbol]->data = 0;
 	#ifdef DEBUG_SYMBOL
-	printf("SYM: %d symbol is malloc in %d\n", nextSymbol, symbolTable[nextSymbol]);
+	printf("SYM: %d symbol %s is malloc in %d\n", nextSymbol, buf, symbolTable[nextSymbol]);
 	#endif
 	nextSymbol++;
 	return nextSymbol-1;

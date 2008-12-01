@@ -3,7 +3,7 @@
 
 #define TypeInfo 		-1
 #define IDList			-2
-#define Vector			-3
+#define FunctionCall	-3
 #define NumberList		-4
 #define NUMBER			-5
 #define ScalarAssign	-6

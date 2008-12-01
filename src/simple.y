@@ -99,6 +99,7 @@ Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp NE_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
 	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET {$$=mkleaf(FunctionCall, $1)}
 	| Term				{ $$=$1;}
 	;
 	
@@ -209,7 +210,9 @@ char *convertTag(int token, char *buff)
 	case MatrixAssign:
 		strcpy(buff, "matrixAssign");break;
 	case NUMBER:
-		strcpy(buff, "number");break;	
+		strcpy(buff, "number");break;
+	case FunctionCall:
+		strcpy(buff, "function call");break;
 	default:
 		sprintf(buff, "unknown token %d",token);break;
 	}

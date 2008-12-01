@@ -11,23 +11,27 @@
 Symbol *traversalNode(struct _node *);
 
 /*
-int main(){int a;a=2+2;print(a);}-ok
-int main(){int a;int[2]b;int[2,2]c;print(a);print(b);print(c);}-ok
-int main(){int a,b,c; a=2; b=3; c=a+b; print(c);}-ok
-int main(){int [3] v;v[0]=1;print(v);} -ok
-int main(){int [3,2] a;a[1,1]=2;print(a);} -ok
-int main(){int a, b; a=2; b=4; a = a-b; print(a);}	-ok
-int main(){int a, b; a=2; b=4; a = a*b; print(a);}	-ok
-int main(){int a, b; a=2; b=4; a = a/b; print(a);}	-ok
-int main(){int a, b; a=2; b=4; a = a%b; print(a);}	-ok
-int main(){int [3] v;v[0]=1;v[1]=2;print(v);} -ok
-int main(){int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c);} -ok
-int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}	-ok
-int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);} -ok
+OK List
+int main(){int a;a=2+2;print(a);}
+int main(){int a;int[2]b;int[2,2]c;print(a);print(b);print(c);}
+int main(){int a,b,c; a=2; b=3; c=a+b; print(c);}
+int main(){int [3] v;v[0]=1;print(v);}
+int main(){int [3,2] a;a[1,1]=2;print(a);}
+int main(){int a, b; a=2; b=4; a = a-b; print(a);}
+int main(){int a, b; a=2; b=4; a = a*b; print(a);}
+int main(){int a, b; a=2; b=4; a = a/b; print(a);}
+int main(){int a, b; a=2; b=4; a = a%b; print(a);}
+int main(){int [3] v;v[0]=1;v[1]=2;print(v);}
+int main(){int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c);}
+int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}
+int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);}
 
-int test(){return 10;}int main(){int a;a=test();print(a);} -working
+Working List
+int main(){test(); return 0;} // need to rise error.
+int test(){return 10;}int main(){int a;a=test();print(a);}
 
-int a; a=[2,2]; print(a); -no
+Need to work List
+int a; a=[2,2]; print(a);
 */
 void interpret(struct _statementList *list){
 	int i;

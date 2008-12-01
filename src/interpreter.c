@@ -79,16 +79,18 @@ void interpretTypeInfo(struct _node *n){
 	}
 }
 Symbol *traversalNode(struct _node *n){
-	int  a, b, i, j;
+	int  a, b, i, j, k, l;
 	Symbol *pa, *pb;
 	void *dataA, *dataB, *dataRz;
 	Symbol *rz;
 	VEC *vec1, *vec2;
-	unsigned int dim;
+	MAT *mat1, *mat2;
 	int tmp, tmp_data, idata_a, idata_b;
 	StatementList *list;
 	char buf[256];
-	//printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
+	#ifdef DEBUG_INTERPRETER
+	printf("traversalNode %s(%d) v:%d, s:%d, b:%d\n", convertTag(n->tag,buf), n, n->val, n->son, n->bro);
+	#endif
 	switch(n->tag){
 	case TypeInfo:
 		interpretTypeInfo(n);
@@ -256,15 +258,17 @@ Symbol *traversalNode(struct _node *n){
 		vec1 = (VEC*)dataA;
 		vec2 = (VEC*)dataB;
 
+		mat1 = (MAT*)dataA;
+		mat2 = (MAT*)dataB;
+
 		switch(pa->type->type){
 			case ScalarType:
 				dataRz=(void*)((int)dataA*(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
 			case VectorType:
-				dim = vec1->dim;
 				tmp = 0;
-				for ( i=0; i<dim; i++ )
+				for (i = 0; i < vec1->dim; i++)
 				{
 					tmp += vec1->ve[i]*vec2->ve[i];
 				}
@@ -273,6 +277,17 @@ Symbol *traversalNode(struct _node *n){
 				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			case MatrixType:
+				tmp = 0;
+				for (i = 0; i < mat1->m; i++)
+				{
+					for (j = 0; j < mat1->n; j++)
+					{
+						tmp += mat1->me[i][j]*mat2->me[i][j];
+					}						
+				}
+				dataRz=(void*)((int)tmp);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			default:
 				printf("Not allowed type in vector .* vector = scalar\n");
@@ -292,15 +307,17 @@ Symbol *traversalNode(struct _node *n){
 		vec1 = (VEC*)dataA;
 		vec2 = (VEC*)dataB;
 
+		mat1 = (MAT*)dataA;
+		mat2 = (MAT*)dataB;
+
 		switch(pa->type->type){
 			case ScalarType:
 				dataRz=(void*)((int)dataA/(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
 			case VectorType:
-				dim = vec1->dim;
 				tmp = 0;
-				for ( i=0; i<dim; i++ )
+				for (i = 0; i < vec1->dim; i++)
 				{
 					tmp += vec1->ve[i]/vec2->ve[i];
 				}
@@ -309,6 +326,17 @@ Symbol *traversalNode(struct _node *n){
 				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			case MatrixType:
+				tmp = 0;
+				for (i = 0; i < mat1->m; i++)
+				{
+					for (j = 0; j < mat1->n; j++)
+					{
+						tmp += mat1->me[i][j]/mat2->me[i][j];
+					}						
+				}
+				dataRz=(void*)((int)tmp);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			default:
 				printf("Not allowed type in vector ./ vector = scalar\n");
@@ -328,16 +356,18 @@ Symbol *traversalNode(struct _node *n){
 		vec1 = (VEC*)dataA;
 		vec2 = (VEC*)dataB;
 
+		mat1 = (MAT*)dataA;
+		mat2 = (MAT*)dataB;
+
 		switch(pa->type->type){
 			case ScalarType:
 				dataRz=(void*)((int)dataA/(int)dataB);
 				rz=mkSymbol(pa->type,dataRz);
 			break;
 			case VectorType:
-				dim = vec1->dim;
 				tmp = 0;
 				tmp_data = 0;
-				for (i = 0; i < dim; i++)
+				for (i = 0; i < vec1->dim; i++)
 				{
 					tmp = 1;
 					for (j = 0; j < vec2->ve[i]; j++)
@@ -351,6 +381,22 @@ Symbol *traversalNode(struct _node *n){
 				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			case MatrixType:
+				tmp_data = 0;
+				for (i = 0; i < mat1->m; i++)
+				{
+					for (j = 0; j < mat1->n; j++)
+					{
+						tmp = 1;
+						for (k = 0; k < mat2->me[i][j]; k++)
+						{
+							tmp *= mat1->me[i][j];
+						}
+						tmp_data += tmp;
+					}						
+				}
+				dataRz=(void*)((int)tmp_data);
+				
+				rz=mkSymbol(mkScalarType(0),dataRz);
 			break;
 			default:
 				printf("Not allowed type in vector ./ vector = scalar\n");
@@ -496,9 +542,30 @@ Symbol *traversalNode(struct _node *n){
 			break;
 		}
 		break;
-	case INC_OP:
-		pa=traversalNode(n->son->bro);
+	case NOT_OP:
+		pa=traversalNode(n->son);
+				
+		dataA = pa->data;
 		
+		idata_a = (int)dataA;
+		
+		switch(pa->type->type){
+			case ScalarType:
+				if (idata_a == 0)
+					dataRz = (void*)1;
+				else
+					dataRz = (void*)0;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			default:
+				printf("Not allowed type in not\n");
+				exit(-1);
+			break;
+		}
+		break;
+	case INC_OP:
+		pa=traversalNode(n->son);
+				
 		dataA = pa->data;
 		
 		idata_a = (int)dataA;
@@ -506,11 +573,32 @@ Symbol *traversalNode(struct _node *n){
 		switch(pa->type->type){
 			case ScalarType:
 				idata_a = idata_a + 1;
-				dataRz = (void*)idata_a;
+				dataRz = (void*)(idata_a);
+				pa->data = (void*)idata_a;
 				rz=mkSymbol(pa->type,dataRz);
 			break;
 			default:
 				printf("Not allowed type in inc\n");
+				exit(-1);
+			break;
+		}
+		break;
+	case DEC_OP:
+		pa=traversalNode(n->son);
+				
+		dataA = pa->data;
+		
+		idata_a = (int)dataA;
+		
+		switch(pa->type->type){
+			case ScalarType:
+				idata_a = idata_a - 1;
+				dataRz = (void*)(idata_a);
+				pa->data = (void*)idata_a;
+				rz=mkSymbol(pa->type,dataRz);
+			break;
+			default:
+				printf("Not allowed type in dec\n");
 				exit(-1);
 			break;
 		}

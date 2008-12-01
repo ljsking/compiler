@@ -24,8 +24,8 @@
 	struct _intList *intList;
 	struct _statementList *stmtList;
 }
-%type  <stmtList> DeclareStatements Statements DeclareStatement Statement Function
-%type  <nodeVal> IDList Exp ScalarTerm ScalarExp
+%type  <stmtList> Statements DeclareStatements ExpStatements DeclareStatement ExpStatement MainFunction
+%type  <nodeVal> IDList Exp Term
 %type  <typeVal> Type
 %type  <intVal>  Number
 
@@ -41,28 +41,20 @@
 %left  ADD_OP SUB_OP LES_OP GRT_OP GE_OP LE_OP EQ_OP NE_OP AND_OP OR_OP
 %%
 
-Function	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET DeclareStatements Statements CLOSE_BRACKET { 
-						mergeStatementList($6,$7); 
-						freeStatementList($7);
-						$$=$6;
-						root=$$;
-					}
-			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
-			| Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET DeclareStatements CLOSE_BRACKET {$$=$6; root=$$;}
+MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
+				;
+
+Statements	: DeclareStatements ExpStatements {	mergeStatementList($1,$2); freeStatementList($2); $$=$1;}
+			| DeclareStatements
+			| ExpStatements
 			;
 
-DeclareStatements : DeclareStatements DeclareStatement { 
-						mergeStatementList($1,$2); 
-						freeStatementList($2);
-						$$=$1;
-					}
+DeclareStatements : DeclareStatements DeclareStatement { mergeStatementList($1,$2);freeStatementList($2);$$=$1;}
 				  | DeclareStatement
 				  ;
 
 DeclareStatement : Type IDList SEMICOLONE { $$=mkStatementListWithVal(mktree(TypeInfo, (int)$1, 0, $2));};
-					
-Number 	: POSITIVE_NUMBER
-		| NEGATIVE_NUMBER
+
 
 Type : INT {$$=mkScalarType(0);}
 	 | BOOL{$$=mkScalarType(1);}
@@ -76,50 +68,48 @@ IDList : ID {$$=mktree(IDList, 0, 0, mkleaf(ID, $1)); }
 	   | IDList COMMA ID {$$=mkbro($1,mkleaf(ID, $3));}
 	   ;
 
-Statements	: Statements Statement 	{ 
-							mergeStatementList($1,$2); 
-							freeStatementList($2);
-							$$=$1;
-						}
-			| Statement
-			;
+ExpStatements	: ExpStatements ExpStatement 	{ mergeStatementList($1,$2);freeStatementList($2);$$=$1;}
+				| ExpStatement
+				;
 
-Statement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
-			| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
-			| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
-			| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
-			| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
-			| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
-			;
+ExpStatement 	: Exp SEMICOLONE { $$=mkStatementListWithVal($1);}
+				| ID ASS_OP Exp SEMICOLONE { $$=mkScalarAssignmentStatement($1, $3) }
+				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkVectorAssignmentStatement ($1, $3, $6); }
+				| ID OPEN_SQUARE_BRACKET POSITIVE_NUMBER COMMA POSITIVE_NUMBER CLOSE_SQUARE_BRACKET ASS_OP Exp SEMICOLONE { $$ = mkMatrixAssignmentStatement ($1, $3, $5, $8); }
+				| PRINT OPEN_ROUND_BRACKET ID CLOSE_ROUND_BRACKET SEMICOLONE { $$ = mkStatementListWithVal(mkleaf(PRINT,$3)); }
+				| WHILE OPEN_ROUND_BRACKET Exp CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$ = mkStatementListWithVal(mktree(WHILE, 0,(Node *)$6, $3));}
+				;
 			
-Exp			: ScalarExp
 			
-ScalarExp	: ScalarExp ADD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp SUB_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp LES_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp GRT_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp GE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp LE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp EQ_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp NE_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp AND_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarExp OR_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm					{ $$=$1;}
-			;
+Exp	: Exp ADD_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp SUB_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp LES_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp GRT_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp GE_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp LE_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp EQ_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp NE_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp AND_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Exp OR_OP Term	{ $$=mktree($2, 0, $3, $1);}
+	| Term					{ $$=$1;}
+	;
 	
-ScalarTerm	: ScalarTerm MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm MOD_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm ELE_MUL_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm ELE_DIV_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| ScalarTerm ELE_POW_OP ScalarTerm	{ $$=mktree($2, 0, $3, $1);}
-			| INC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
-			| DEC_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
-			| NOT_OP ScalarTerm		{ $$=mktree($1, 0, 0, $2);}
-			| ID				{ $$=mkleaf(ScalarID, $1);}
-			| Number			{ $$=mkleaf(ScalarData,$1);}
-			;
+Term	: Term MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term DIV_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term MOD_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term POW_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term ELE_MUL_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term ELE_DIV_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| Term ELE_POW_OP Term	{ $$=mktree($2, 0, $3, $1);}
+		| INC_OP Term		{ $$=mktree($1, 0, 0, $2);}
+		| DEC_OP Term		{ $$=mktree($1, 0, 0, $2);}
+		| NOT_OP Term		{ $$=mktree($1, 0, 0, $2);}
+		| ID				{ $$=mkleaf(ScalarID, $1);}
+		| Number			{ $$=mkleaf(ScalarData,$1);}
+		;
+			
+Number 	: POSITIVE_NUMBER
+		| NEGATIVE_NUMBER
 %%
 
 int yyerror() { puts("syntax error!"); }

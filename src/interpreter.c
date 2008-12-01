@@ -404,6 +404,10 @@ Symbol *traversalNode(struct _node *n){
 		#endif
 		printSymbolByIndex(n->val);
 		break;
+	case FunctionCall:
+		idata_a = n->val;//id index
+		callFunction(idata_a);
+	break;
 	}
 	return rz;
 }

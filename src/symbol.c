@@ -8,15 +8,21 @@
 //#define DEBUG_SYMBOL
 struct _symbol **symbolTable;
 int nextSymbol = 0;
+static int scope;//0: root, 1: main
+void setScope(int Scope){
+	scope=Scope;
+}
 int isDuplicated(char *id)
 {
+	Symbol *s;
 	int i;
 	for(i=0;i<nextSymbol;i++){
 		#ifdef DEBUG_SYMBOL
 		printf("SYM: compare %s and %s\n", id, symbolTable[i]->id);
 		#endif
-		if(0==strcmp(id, symbolTable[i]->id)){
-			return i;
+		s=symbolTable[i];
+		if(0==strcmp(id, s->id)){
+			if(s->function||(s->scope == scope)) return i;
 		}
 	}
 	return -1;
@@ -54,6 +60,7 @@ int insertSymbolTable(char *id){
 	symbolTable[nextSymbol]->type = 0;
 	symbolTable[nextSymbol]->data = 0;
 	symbolTable[nextSymbol]->function = 0;
+	symbolTable[nextSymbol]->scope = scope;
 	#ifdef DEBUG_SYMBOL
 	printf("SYM: %d symbol %s is malloc in %d\n", nextSymbol, buf, symbolTable[nextSymbol]);
 	#endif

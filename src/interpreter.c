@@ -29,6 +29,7 @@ int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);}
 int main(){test(); return 0;} // need to rise error.
 int test(){int a;print(a);}int main(){int b;test();b=2;print(b);}
 int test(){int a;a=2;return a;}int main(){int b;b=test();print(b);}
+int test(){int a;a=2;print(a);}int main(){int a;a=3;test();print(a);} //print 2, 3 because scope
 
 Working List
 

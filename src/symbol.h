@@ -8,6 +8,7 @@ typedef struct _symbol {
 	int	 function;
 	struct _type *type;
 	void *data;
+	int scope;
 }Symbol;
 extern struct _symbol **symbolTable;
 extern int nextSymbol;
@@ -22,4 +23,5 @@ Symbol *getSymbol(int);
 struct _type *getTypeSymbol(int);
 void printSymbol(struct _symbol *);
 void printSymbolByIndex(int);
+void setScope(int);
 #endif

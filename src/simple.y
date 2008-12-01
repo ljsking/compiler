@@ -46,10 +46,10 @@ Program	: MainFunction {root=$1;}
 		| Function Program
 		;
 
-MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {$$=$6; root=$$;}
+MainFunction	: INT MAIN OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope(1);$$=$6; root=$$;}
 				;
 
-Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {initializeFunction($2, $1, $6);}
+Function	: Type ID OPEN_ROUND_BRACKET CLOSE_ROUND_BRACKET OPEN_BRACKET Statements CLOSE_BRACKET {setScope($2);initializeFunction($2, $1, $6);}
 
 Statements	: DeclareStatements ExpStatements {	mergeStatementList($1,$2); freeStatementList($2); $$=$1;}
 			| DeclareStatements
@@ -126,6 +126,7 @@ int yyerror() { puts("syntax error!"); }
 int main() { 
 	initType();
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
+	insertSymbolTable("main");
 	yyparse();
 	interpretForMain(root);
 	return 0;

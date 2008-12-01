@@ -8,5 +8,5 @@ typedef struct _function{
 	StatementList *list;
 }Function;
 void initializeFunction(int, Type *, StatementList *);
-void callFunction(int);
+Symbol *callFunction(int);
 #endif

@@ -25,10 +25,11 @@ int main(){int [3] v;v[0]=1;v[1]=2;print(v);}
 int main(){int [3] a,b,c;a[0]=1;b[0]=2;b[1]=3;c=a+b;print(c);}
 int main(){int a, b, c; a=1; b=2; c=a>b; print(c);}
 int main(){int a,i;i=0;a=0;while(a<5){a=a+i;i=i+2;}print(a);}
+int main(){test(); return 0;} // need to rise error.
+int test(){int a;print(a);}int main(){int b;test();b=2;print(b);}
 
 Working List
-int main(){test(); return 0;} // need to rise error.
-int test(){return 10;}int main(){int a;a=test();print(a);}
+int test(){int a;a=2;return 2}int main(){int b;b=test();print(b);}
 
 Need to work List
 int a; a=[2,2]; print(a);

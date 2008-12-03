@@ -18,7 +18,7 @@
 [ \t]	;
 ,		{return(COMMA);}
 ;		{return(SEMICOLONE);};
-\n		return (0);
+<<EOF>>		{yyterminate();};
 
 "+="	{yylval.intVal = ADD_ASSIGN; return(ADD_ASSIGN); };
 "-="	{yylval.intVal = SUB_ASSIGN; return(SUB_ASSIGN); };

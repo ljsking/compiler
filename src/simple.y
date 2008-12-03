@@ -14,6 +14,7 @@
 	struct _statementList *mkScalarAssignmentStatement(int, struct _node *);
 	struct _statementList *mkVectorAssignmentStatement(int, int, struct _node *);
 	struct _statementList *mkMatrixAssignmentStatement(int, int, int, struct _node *);
+	extern FILE *yyin;
 %}
 
 %union {
@@ -137,10 +138,11 @@ Number 	: POSITIVE_NUMBER
 
 int yyerror() { puts("syntax error!"); }
 
-int main() { 
+int main(int argc, char **argv) {
 	initType();
 	symbolTable = (struct _symbol **)malloc(sizeof(struct _symbol *)*MAX_SYMBOL_SIZE);
 	insertSymbolTable("main");
+	yyin = fopen( argv[1], "r" );
 	yyparse();
 	interpretForMain(root);
 	return 0;
